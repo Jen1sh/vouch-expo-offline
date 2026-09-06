@@ -32,6 +32,15 @@ const config: ExpoConfig = {
     "expo-router",
     "expo-secure-store",
     [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "Allow Vouch to access your photos so you can add them to your profile.",
+        cameraPermission: false,
+        microphonePermission: false,
+      },
+    ],
+    [
       "expo-splash-screen",
       {
         image: "./assets/images/splash-icon.png",

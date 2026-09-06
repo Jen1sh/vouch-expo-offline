@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter, useSegments } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -18,7 +18,7 @@ import "@/src/theme/unistyles";
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
-  anchor: "(tabs)",
+  anchor: "(protected)",
 };
 
 export default function RootLayout() {
@@ -52,24 +52,13 @@ export default function RootLayout() {
 }
 
 function AppNavigator() {
-  const { status } = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
+  const { status, onboardingStatus } = useAuth();
 
   useEffect(() => {
-    const isInAuthGroup = segments[0] === "(auth)";
-    if (status === "signedOut" && !isInAuthGroup) {
-      router.replace("/(auth)/sign-in");
-    } else if (status === "signedIn" && isInAuthGroup) {
-      router.replace("/(tabs)");
-    }
-  }, [status, segments, router]);
-
-  useEffect(() => {
-    if (status !== "unknown") {
+    if (status !== "unknown" && (status === "signedOut" || onboardingStatus !== "unknown")) {
       SplashScreen.hideAsync();
     }
-  }, [status]);
+  }, [status, onboardingStatus]);
 
   if (status === "unknown") {
     return null;
@@ -78,16 +67,11 @@ function AppNavigator() {
   return (
     <Stack>
       <Stack.Protected guard={status === "signedIn"}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(protected)" options={{ headerShown: false }} />
       </Stack.Protected>
       <Stack.Protected guard={status === "signedOut"}>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack.Protected>
-
-      <Stack.Screen
-        name="modal"
-        options={{ presentation: "modal", title: "Modal" }}
-      />
     </Stack>
   );
 }
