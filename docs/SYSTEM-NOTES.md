@@ -1,4 +1,4 @@
-# System Notes — Auth, Routing, Onboarding Persistence
+# System Notes — Auth, Routing, Onboarding Persistence, Dev Panel
 
 Operational notes on the sign-in/session layer and the onboarding flow. NOT an
 onboarding doc; this is the "why you did it that way" record for debugging and
@@ -9,12 +9,12 @@ future edits.
 - `app/(auth)/sign-in.tsx` (single screen, per product decision) hosts
   `SignInScreen` from `src/features/auth/components/SignInScreen.tsx`.
 - A mock SMS: the 6-digit code is generated locally via
-  `generateVerificationCode()` (`expo-crypto` `randomUUID()` → numeric chars).
-  It is **shown on screen** ("Demo code: …") instead of being sent. The Dev
-  Panel is the future home for this readout (REQUIREMENTS §3.1 / §4.5).
-- Submitting the wrong code shows an inline error in `critical` red. Correct
-  code → `signIn()` → session token persisted → `AuthProvider.status` →
-  `signedIn` → the root gate redirects to `app/(protected)/`.
+  `generateVerificationCode()` (`expo-crypto` `randomUUID()` → numeric chars),
+  persisted to SQLite, and shown in the **Dev Panel** (REQUIREMENTS §3.1 / §4.5)
+  — see "Dev Panel & simulated network" below. Submitting the wrong code shows
+  an inline error in `critical` red. Correct code → `signIn()` → session token
+  persisted → `AuthProvider.status` → `signedIn` → the root gate redirects to
+  `app/(protected)/`.
 
 ## Session token (SecureStore) vs profile (SQLite)
 
@@ -100,3 +100,41 @@ Two persistence layers with different jobs:
 - Everything under `(auth)` is unprotected; everything else requires
   `signedIn`. If the gate misbehaves, start at the `Stack.Protected` guards in
   `app/_layout.tsx` and `app/(protected)/_layout.tsx`.
+
+## Dev Panel & simulated network
+
+- **Entry point:** a persistent "DEV" floating action button
+  (`src/devpanel/DevPanelFab.tsx`) mounted in `app/_layout.tsx` outside the
+  auth `Stack.Protected`s — it overlays every screen (sign-in, onboarding,
+  tabs) and pushes `/dev-panel`; it hides itself while the panel is open. No
+  gesture/package needed; works on web too. The route is `app/dev-panel.tsx`
+  (`Stack.Screen name="dev-panel"` with `presentation: "modal"`, declared
+  outside the auth guards so it's reachable pre- and post-sign-in). UI lives in
+  `src/devpanel/DevPanel.tsx`.
+- **Verification code store:** `src/db/schema/verification-codes.ts` — a single
+  row `id='current'` holding the code + `issuedAt` (ms). Read/write through
+  `src/db/queries/verification.queries.ts`; the reactive façade is
+  `src/store/verification/verification-code-store.ts` (plain module +
+  `useSyncExternalStore`; `ensureCode()` hydrates/gen-creates once,
+  `resendVerificationCode()` persists then notifies, `verify()` strips
+  non-digits, requires 6, exact-matches). Consumers never touch the DB.
+- **Cooldown is global by construction:** `useVerificationCode`
+  (`src/hooks/use-verification-code.ts`, `RESEND_COOLDOWN_SECONDS = 30`)
+  derives the remaining seconds from `issuedAt`, so a resend in the Dev Panel
+  resets the sign-in button's countdown and vice versa.
+- **Mock network (`src/mocks/`):** `devPanelControls.ts` is the live knob store
+  (module + `useSyncExternalStore`; defaults latency 300–1200ms,
+  `writeFailureRate` 0.2, `duplicateRate` 0.05, `outOfOrderWindow` 2, offline
+  off). `server.ts` is the single "request" entry the future outbox drain calls:
+  throws `NetworkOfflineError` / `WriteFailureError` per the knobs, else resolves
+  after random latency. `realtimeChannel.ts` emits the `RealtimeEvent`
+  discriminated union, honoring the duplicate rate + out-of-order window;
+  `src/realtime/dedupe.ts` is the consumer-side seen-id reducer. The Dev Panel's
+  "Force a match / duplicate" buttons drive both, and the event feed line shows
+  received vs applied (the visible proof dedupe works).
+- **Scope note:** every knob is live; "Dump outbox contents" and "Wipe local
+  data" render disabled until the outbox milestone lands. Seed data (e.g. the
+  60-profile catalog) is NOT in the DB — it is a mocks-milestone concern;
+  `ensureMigrated()` only applies schema.
+- Web bundling still works (wasm assetExts + no-dependency mocks); verified via
+  `npx expo export --platform web`.

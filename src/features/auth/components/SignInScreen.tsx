@@ -4,31 +4,29 @@ import { ScrollView, TextInput, KeyboardAvoidingView } from 'react-native';
 import Button from '@/components/Button';
 import Text from '@/components/Text';
 import View from '@/components/View';
-import { useCountdown } from '@/src/hooks/use-countdown';
 import { StyleSheet } from '@/src/theme';
 import { useAuth } from '@/src/features/auth/context/use-auth';
-import { generateVerificationCode } from '@/src/features/auth/generate-code';
-
-const RESEND_COOLDOWN_SECONDS = 30;
+import { useVerificationCode } from '@/src/hooks/use-verification-code';
+import { verify } from '@/src/store/verification/verification-code-store';
 
 type CodeInputFocus = 'phone' | 'code' | null;
 
 export default function SignInScreen() {
   const { signIn } = useAuth();
+  const { cooldownRemaining, isCooldown, resend } = useVerificationCode();
 
   const [phone, setPhone] = useState('');
-  const [code, setCode] = useState('');
+  const [codeInput, setCodeInput] = useState('');
   const [focused, setFocused] = useState<CodeInputFocus>(null);
-  const [expectedCode, setExpectedCode] = useState(generateVerificationCode);
   const [error, setError] = useState<string | null>(null);
   const [resendNotice, setResendNotice] = useState<string | null>(null);
-  const { remaining, isRunning, reset } = useCountdown(RESEND_COOLDOWN_SECONDS);
 
-  const canSubmit = phone.trim().length > 0 && code.length === 6;
+  const canSubmit = phone.trim().length > 0 && codeInput.length === 6;
 
   const handleSignIn = async () => {
-    if (code !== expectedCode) {
-      setError('Incorrect code. Please try again.');
+    const result = verify(codeInput);
+    if (!result.ok) {
+      setError(result.reason === 'format' ? 'Enter the 6-digit code.' : 'Incorrect code. Please try again.');
       return;
     }
     setError(null);
@@ -41,9 +39,8 @@ export default function SignInScreen() {
 
   const handleResendCode = () => {
     setError(null);
-    setExpectedCode(generateVerificationCode());
+    void resend();
     setResendNotice('Code re-sent');
-    reset();
   };
 
   return (
@@ -63,7 +60,7 @@ export default function SignInScreen() {
           <TextInput
             style={styles.input(focused === 'phone')}
             value={phone}
-            onChangeText={(value) => setPhone(value)}
+            onChangeText={setPhone}
             onFocus={() => setFocused('phone')}
             onBlur={() => setFocused(null)}
             placeholder="Phone number"
@@ -75,9 +72,9 @@ export default function SignInScreen() {
 
           <TextInput
             style={styles.input(focused === 'code')}
-            value={code}
+            value={codeInput}
             onChangeText={(value) => {
-              setCode(value);
+              setCodeInput(value);
               setResendNotice(null);
             }}
             onFocus={() => setFocused('code')}
@@ -97,9 +94,9 @@ export default function SignInScreen() {
           ) : null}
 
           <View style={styles.resendRow}>
-            {isRunning ? (
+            {isCooldown ? (
               <Text variant="labelMd" color="textMuted" accessibilityLiveRegion="polite">
-                Resend code in {formatCountdown(remaining)}
+                Resend code in {formatCountdown(cooldownRemaining)}
               </Text>
             ) : (
               <Button variant="secondary" size="sm" onPress={handleResendCode}>
@@ -116,11 +113,6 @@ export default function SignInScreen() {
           <Button onPress={handleSignIn} disabled={!canSubmit}>
             Sign in
           </Button>
-
-          {/* Stand-in for the Dev Panel's "current sign-in code" readout (REQUIREMENTS §3.1 / §4.5). */}
-          <Text variant="labelMd" color="textMuted" style={styles.codeHint}>
-            Demo code: {expectedCode}
-          </Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -172,8 +164,5 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: theme.spacing.xs,
-  },
-  codeHint: {
-    textAlign: 'center',
   },
 }));

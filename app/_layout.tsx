@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import DevPanelFab from "@/src/devpanel/DevPanelFab";
 import { AuthProvider } from "@/src/features/auth/context/AuthProvider";
 import { useAuth } from "@/src/features/auth/context/use-auth";
 import "@/src/theme/unistyles";
@@ -46,6 +47,7 @@ export default function RootLayout() {
       <AuthProvider>
         <AppNavigator />
       </AuthProvider>
+      <DevPanelFab />
       <StatusBar style="auto" />
     </ThemeProvider>
   );
@@ -72,6 +74,8 @@ function AppNavigator() {
       <Stack.Protected guard={status === "signedOut"}>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack.Protected>
+
+      <Stack.Screen name="dev-panel" options={{ presentation: "modal", headerShown: false }} />
     </Stack>
   );
 }
