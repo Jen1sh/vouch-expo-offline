@@ -38,6 +38,12 @@ yarn-error.*
 
 app-example
 
-# generated native folders
+# generated native code & folders (managed workflow: created by `npx expo run:ios` / `npx expo run:android`)
 /ios
 /android
+
+# native build artifacts
+*.apk
+*.aab
+*.ipa
+*.hprof

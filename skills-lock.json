@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "skills": {
+    "api-design": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/api-design/SKILL.md",
+      "computedHash": "ee49af1da08164a039ac94fccfeb8a995d2ad79d4491058d69af83a795694cb9"
+    },
+    "build-nitro-modules": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/build-nitro-modules/SKILL.md",
+      "computedHash": "9fce6b96add81fc0baf4594edd0c70c811c25ab2109d25b16f148c46c6d754b4"
+    },
+    "cpp": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/cpp/SKILL.md",
+      "computedHash": "3a50a3ad2f940b1efa6429aad3fe69786479de4f4d137831cf3f55f3a16c174b"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "89496d5dd00f4810205f351759594fc2742bf8eea85a2f2b2d1de59f4bd91576"
+    },
+    "kotlin": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin/SKILL.md",
+      "computedHash": "13214bdae9eee96ec4add645f0e625cee8213de70629eec980c80fcb250458d1"
+    },
+    "mobile-design": {
+      "source": "RubenGlez/mobile-design",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "1e80f88915cf93d24b3c71c3f91b5901a2c42f66a23c4e5df9b08b3f2659c135"
+    },
+    "nitro-fetch": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-nitro-fetch/SKILL.md",
+      "computedHash": "8bba6ef22ee96510b10f0ea576f67a1cf1fafb22f457f30988adc388648b85e1"
+    },
+    "react-native-mmkv": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-mmkv/SKILL.md",
+      "computedHash": "96b4224d99089192160f9a2d1f3c29f4ca9155dfa69d2583719c2dad95826959"
+    },
+    "react-native-vision-camera": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-vision-camera/SKILL.md",
+      "computedHash": "2e5e0231568b4745682d505d81ccdb3dc341157dfbf40d5178ce1322976430e8"
+    },
+    "react-native-vision-camera-realtime": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-vision-camera-realtime/SKILL.md",
+      "computedHash": "e4b4da84a44b8029f753bcdd90ddcb05fd7b85e03f945964c3b7bbfc92b18b04"
+    },
+    "swift": {
+      "source": "margelo/react-native-skills",
+      "sourceType": "github",
+      "skillPath": "skills/swift/SKILL.md",
+      "computedHash": "1d26f5cbc0b4f14f24e6a96ac49a95b58817ee046c4ad12bb4a9b3b7c9b70c09"
+    }
+  }
+}
