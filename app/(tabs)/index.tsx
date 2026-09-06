@@ -3,10 +3,14 @@ import { Link } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
+import Button from '@/components/Button';
 import Text from '@/components/Text';
 import View from '@/components/View';
+import { StyleSheet as ThemedStyleSheet } from '@/src/theme';
+import { useAuth } from '@/src/features/auth/context/use-auth';
 
 export default function HomeScreen() {
+  const { signOut } = useAuth();
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -27,6 +31,11 @@ export default function HomeScreen() {
           Open the modal
         </Text>
       </Link>
+      <View style={themedStyles.signOut}>
+        <Button variant="secondary" onPress={signOut}>
+          Sign out
+        </Button>
+      </View>
     </ParallaxScrollView>
   );
 }
@@ -55,3 +64,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
 });
+
+const themedStyles = ThemedStyleSheet.create((theme) => ({
+  signOut: {
+    marginTop: theme.spacing.lg,
+  },
+}));
