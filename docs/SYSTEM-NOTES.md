@@ -156,9 +156,12 @@ Two persistence layers with different jobs:
   `src/realtime/dedupe.ts` is the consumer-side seen-id reducer. The Dev Panel's
   "Force a match / duplicate" buttons drive both, and the event feed line shows
   received vs applied (the visible proof dedupe works).
-- **Scope note:** every knob is live. Seed data (e.g. the 60-profile catalog)
-  is NOT in the DB — it is mocks-milestone seed (deterministic, asserted by a
-  unit test); `ensureMigrated()` only applies schema.
+- **Scope note:** every knob is live. Seed data is the deterministic 60-profile
+  catalog (asserted by a unit test); Discover reads it from the in-memory
+  generator, while Browse mirrors it **into SQLite** idempotently
+  (`seedCatalogIfEmpty`, migration `0003`) because its list paginates from the
+  database — both feature trees are literally the same people. `ensureMigrated()`
+  only applies schema (including `0003`).
 - Web bundling still works (wasm assetExts + no-dependency mocks); verified via
   `npx expo export --platform web`.
 
@@ -195,3 +198,41 @@ Two persistence layers with different jobs:
   `[discover.perf] re-renders between swipes` — the numbers go into
   `TECHNICAL.md`'s measured table. Archive/copy them any time you re-run the
   deck.
+
+## Browse tab (member) — FlashList, filters, row isolation, pagination
+
+- **Route:** `app/(protected)/(member)/(tabs)/browse.tsx` →
+  `src/features/browse/components/BrowseScreen.tsx` (line in the member tab
+  layout already existed; the file did not). Feature code lives under
+  `src/features/browse/` (`model/`, `store/`, `hooks/`, `components/`).
+- **Same people as Discover:** the 60 `SEED_PROFILES` are mirrored into SQLite
+  once (`src/db/queries/catalog.queries.ts` `seedCatalogIfEmpty`, migration
+  `0003_add-catalog-mirror.sql`). Discover stays on the in-memory generator;
+  Browse paginates the SQLite mirror (`listCatalogPage`, `LIMIT/OFFSET`,
+  `ORDER BY distance_km ASC, id ASC`, `hasMore` via `limit + 1`).
+- **Filters (§3.4)** are pure model functions (`model/browseFilters.ts`,
+  unit-tested) feeding `buildCatalogWhere` — age steppers keep `from ≤ to`,
+  distance chips Any/≤10/≤25/≤50km, verified switch. Changing a filter re-queries
+  page 1 (epoch-guarded by `useBrowseFeed`) and `scrollToOffset(0)`s.
+- **Like toggles** (`BrowseScreen` handler): optimistic flip in
+  `store/user-swipes.ts` → `enqueueDecision('like')` / `undoDecision(id)` — the
+  same outbox path as the deck, so Discover and Browse agree on `swipes`
+  (re-hydrated into the mirror on every tab focus). A row press pushes the
+  existing typed `/profile/[userId]` route.
+- **Row isolation (the requirement, with proof):** each `BrowseRow` subscribes
+  to its own `useUserSwipe(id)`; a toggle re-renders exactly that cell. Dev
+  builds show a per-row `×N` render badge (`performance.tsx`) and log
+  `[browse.perf]`, and `BrowseRow.test.tsx` asserts a sibling's count stays `×1`.
+- **Scroll preservation:** react-navigation keeps the tab mounted across
+  switches, so the `FlashList` retains its offset with no saved state.
+- **Why FlashList over FlatList** and the measured §4.6 evidence table live in
+  `docs/TECHNICAL.md`.
+- **Bottom-sheet filters:** `BrowseFilterBar` is a trigger pill + RN `Modal`
+  bottom sheet containing `BrowseFilterPanel` (extracted controls). Filters
+  apply live on every interaction; closing is instant (Done or scrim). The sheet
+  `Modal` keeps the `FlashList` mounted, preserving scroll position.
+- **FlashList blank-space fixes (all platforms):** row thumbnail uses
+  `recyclingKey={profile.id}` + `cachePolicy="memory-disk"` to prevent
+  recycled-cell ghost images; the footer is a stable `minHeight: 64` shell
+  (spinner / "end" / retry swap changes content without changing outer height).
+  `estimatedItemSize` is not set — FlashList v2 dropped the prop.

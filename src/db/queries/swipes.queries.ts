@@ -39,6 +39,11 @@ export async function getSwipe(client: DbClient, profileId: string): Promise<Swi
   return row;
 }
 
+/** Every mirror row — used to hydrate Browse's per-row like-state mirror. */
+export function listAllSwipes(): Promise<SwipeRow[]> {
+  return db.select().from(swipes);
+}
+
 export function deleteAllSwipes(): Promise<unknown> {
   return db.delete(swipes);
 }

@@ -1,11 +1,5 @@
-import PlaceholderScreen from '@/components/placeholder-screen';
+import { BrowseScreen } from "@/src/features/browse";
 
-export default function BrowseScreen() {
-  return (
-    <PlaceholderScreen
-      icon="list.bullet"
-      title="Browse"
-      caption="Same people as Discover as a filterable list — age, distance, verified."
-    />
-  );
+export default function BrowseRoute() {
+  return <BrowseScreen />;
 }

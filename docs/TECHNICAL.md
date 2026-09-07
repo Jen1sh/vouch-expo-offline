@@ -1,4 +1,4 @@
-# Technical Notes — Discover Deck, Outbox, and Performance (§4.6 evidence)
+# Technical Notes — Discover Deck, Outbox, Browse (FlashList + SQLite pagination), and Performance (§4.6 evidence)
 
 Design decisions, invariants, and measurement channel for the swipe deck and the
 durable write path. Requirements references point at `REQUIREMENTS.md`.
@@ -108,6 +108,128 @@ interests[], photos[] }` with ≥3 photos (`https://picsum.photos/seed/vouch-<id
 Asserted by a unit test. It is **seed data, not DB schema** — `ensureMigrated()`
 only applies migrations.
 
+## Browse — SQLite catalog mirror + pagination (§3.4)
+
+Discover reads the 60 profiles from the in-memory generator; Browse pages them
+out of **SQLite**, so the mirrored data really is the same catalogue.
+
+- **Mirror tables** (`src/db/schema/catalog.ts`, migration `0003_add-catalog-mirror.sql`):
+  `catalog_profiles` (+ indexes on `age`, `distance_km`, `verified`),
+  `catalog_profile_interests` and `catalog_profile_photos` — normalized child
+  tables (CONVENTIONS §8 forbids JSON columns), composite `(profile_id,
+  position)` PKs, FK cascade.
+- **Seeding** (`seedCatalogIfEmpty` in `src/db/queries/catalog.queries.ts`):
+  idempotent, transaction-wrapped, driven by the same `SEED_PROFILES` array as
+  the deck. A no-op once `catalog_profiles` is non-empty, so it can run on every
+  Browse focus.
+- **Pagination is in the DB** (`listCatalogPage`): `LIMIT/OFFSET` over
+  `ORDER BY distance_km ASC, id ASC` (deterministic ⇒ offset never drifts across
+  pages), page size 15. `hasMore` comes from fetching `limit + 1` rows — one
+  query, no second `COUNT`. The thumbnail (`position = 0`) and interests are
+  filled with two narrow indexed lookups per page.
+- **Filters compile to SQL** (`buildCatalogWhere`, indexed columns):
+  `age_from`/`age_to` → `gte`/`lte`, `max_distance_km` → `lte`, `verified_only`
+  → `eq true`. The pure filter model in
+  `src/features/browse/model/browseFilters.ts` is the single source of truth for
+  both the UI steppers/chips/switch and the WHERE builder.
+- **Hook:** `useBrowseFeed` owns first-page load, filter-change reset (epoch
+  guard discards stale responses), `onEndReached` append, tail-page retry, and
+  re-hydration of the per-row like mirror from `swipes` whenever the tab refocuses.
+
+### FlashList over FlatList — why
+
+- **RecyclerListView cell recycling**: FlashList recycles native cells instead
+  of keeping a virtualized window of mounted rows, so 60 expo-image thumbnails
+  cost constant memory even when paged to the full catalogue.
+- **No `estimatedItemSize` obligation in 2.0.2**: unlike 1.x, v2 auto-estimates
+  layout, so row height changes (one-line vs two-line names) don't require a
+  fixed estimate — and the pinned `@shopify/flash-list@2.0.2` dep keeps behavior
+  the same across platforms (mobile + web).
+- Row identity (`keyExtractor = id`) + memoized `BrowseRow` sits fine with cell
+  recycling; each cell's per-row subscription is keyed by `profile.id`.
+
+## Browse — bottom-sheet filter modal (§3.4)
+
+Filters live inside `BrowseFilterPanel` (the pure control body: age steppers,
+distance chips, verified switch, reset row). `BrowseFilterBar` renders a compact
+trigger pill (`slider.horizontal.3` icon + "Filters" + live summary text + active-
+count badge) that opens a slide-up RN `Modal` containing the panel. The sheet
+is `transparent` with `animationType="slide"` and respects the safe-area inset
+via `useSafeAreaInsets().bottom`.
+
+**Live apply**: every stepper/chip/switch interaction calls `onChange`, which
+immediately re-queries the FlashList behind the sheet. The list scrolls to top
+on any filter change (`scrollToOffset(0)`). Closing via the "Done" button or
+the scrim `Pressable` simply sets `open = false` — no confirm step.
+
+**Scroll preservation**: the sheet `Modal` renders over the existing screen; the
+underlying `FlashList` and its scroll offset remain mounted and unchanged, so
+closing the sheet returns the user to exactly where they were.
+
+**`accessibilityViewIsModal`** is intentionally not set on the sheet View.
+The RN `Modal` host already provides native modal semantics on iOS/Android.
+Adding the prop on an inner View causes RNTL's accessibility matcher to hide
+the scrim sibling (modal sibling rule), breaking tests without improving
+device accessibility. This is a known RNTL behaviour — see
+`node_modules/@testing-library/react-native/build/helpers/accessibility.js`
+`isSubtreeInaccessible` → `getHostSiblings` → `computeAriaModal` path.
+
+## Browse — FlashList blank-space fixes (all platforms, §3.4)
+
+Three root causes identified (FlashList GH #1630 / #1751 / #1827 / #1847):
+
+1. **Recycled cells with `expo-image`**: FlashList reuses the same host
+   component for a new row; `expo-image` keeps the old URI or shows a blank
+   frame until the new URI loads. Fix: `recyclingKey={profile.id}` forces
+   a fresh image slot per profile, and `cachePolicy="memory-disk"` avoids
+   redundant network hits on rapid scroll.
+2. **Footer height oscillation on pagination append** (#1847): the footer
+   swaps between spinner / "end" / retry, changing height and triggering a
+   re-measure that briefly clips the bottom of the list. Fix: a single
+   `footerShell` View with a fixed `minHeight: 64` is always rendered when
+   `items.length > 0`; only the inner content (spinner / label / retry button)
+   changes, keeping the outer shell height stable.
+3. **Dev-build artifact on New Architecture** (#1751): cells that have
+   finished recycling briefly flash blank on real devices only in development
+   builds; not reproducible in tests. Confirm on a preview or release build
+   before recording §4.6 numbers.
+
+**Test conventions kept**: no `key` props on row elements (breaks FlashList
+recycling); `keyExtractor={item.id}` + memo'd rows + stable `renderItem`
+ref remain the correct primitives. `estimatedItemSize` is not used — FlashList
+v2 dropped the prop entirely (verified in `@shopify/flash-list@2.0.2` types).
+
+## Browse — per-row like isolation (§3.4, §4.6 evidence)
+
+The requirement: toggling one row's like must not re-render the list. Two layers:
+
+1. **Storage** (`src/features/browse/store/user-swipes.ts`): a module-level
+   `Map<profileId, decision>` mirror fed from `listAllSwipes()` and kept in sync
+   with the outbox write path (`enqueueDecision` / `undoDecision`, same calls the
+   deck uses). Exposes `useUserSwipe(id)` via `useSyncExternalStore`, so each
+   `BrowseRow` subscribes to exactly one profile (CONVENTIONS §9 narrow
+   selector). A toggle notifies only that profile's single subscriber — the list
+   `data` prop never changes.
+2. **Evidence channel** (`src/features/browse/performance.tsx`): dev-only per-row
+   `×N` render badge + `[browse.perf]` log of every mounted row's count on each
+   like toggle. `src/features/browse/components/BrowseRow.test.tsx` asserts the
+   isolation in jest: with two rows mounted, toggling row A leaves row B's
+   render count at exactly 1.
+
+| Metric (device capture) | Expected | Measured (fill on device) |
+| --- | --- | --- |
+| Rows re-rendered by one like toggle | 1 | — |
+| Sibling row render counts after one like | unchanged (still `×1`) | — |
+| `[browse.perf]` mount→toggle row counts | only toggled id advances | — |
+
+## Browse — scroll position across tab switches
+
+react-navigation bottom tabs keep inactive tab screens mounted by default, so the
+`FlashList` instance (and its scroll offset) survives leaving and returning to
+the tab — no state to save or restore. The only explicit scroll call is
+`scrollToOffset(0)` when filters change, so a narrowed result set doesn't park
+the user mid-list. Verified on device during the QA pass.
+
 ## Test suite (jest-expo)
 
 - `src/features/discover/model/deck.test.ts` — deck state machine, threshold
@@ -116,6 +238,18 @@ only applies migrations.
   cap.
 - `src/mocks/seed/profiles.test.ts` — catalog size, shape, uniqueness,
   determinism.
+- `src/features/browse/model/browseFilters.test.ts` — filter transitions,
+  bounds, from ≤ to invariant, active-count badge.
+- `src/features/browse/model/feed.test.ts` — `mergePage` append, de-dupe by id,
+  `hasMore` carry-through.
+- `src/features/browse/store/user-swipes.test.ts` — per-row notifications
+  (`renderHook` against the public `useUserSwipe`), hydrate/clear semantics.
+- `src/features/browse/components/BrowseRow.test.tsx` — the §3.4 isolation proof
+  (two rows, one toggle, sibling render count stays `×1`), persisted-like mount
+  state, row press → profile id.
+- `src/features/browse/components/BrowseFilterBar.test.tsx` — trigger opens
+  bottom sheet, age steppers, distance chip select/reset, verified switch
+  inside the modal, Done and scrim close.
 
 Run with `npm test`. (Integration tests for the drain's ordering and the
 `=FailedOutboxItems` stream are deferred to the realtime/reconciliation pass — a

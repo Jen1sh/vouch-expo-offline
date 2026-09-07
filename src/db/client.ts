@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { openDatabaseSync } from "expo-sqlite";
 
+import * as catalogSchema from "@/src/db/schema/catalog";
 import * as profileSchema from "@/src/db/schema/profiles";
 import * as outboxSchema from "@/src/db/schema/outbox";
 import * as swipesSchema from "@/src/db/schema/swipes";
@@ -13,7 +14,7 @@ import * as swipesSchema from "@/src/db/schema/swipes";
  */
 export const expoDb = openDatabaseSync("vouch.db", { enableChangeListener: true });
 
-export const schema = { ...profileSchema, ...outboxSchema, ...swipesSchema };
+export const schema = { ...catalogSchema, ...profileSchema, ...outboxSchema, ...swipesSchema };
 
 export const db = drizzle(expoDb, { schema });
 
