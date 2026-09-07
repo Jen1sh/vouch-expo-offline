@@ -1,4 +1,4 @@
-import { typography, spacing, radius, shadows, fontFamilies } from '../tokens';
+import { typography, spacing, radius, shadows, fontFamilies, durations, spring } from '../tokens';
 
 /**
  * Light theme for the "Warm Editorial Trust" system — warm stone/cream
@@ -90,6 +90,8 @@ export const light = {
   radius,
   shadows,
   fontFamilies,
+  durations,
+  spring,
 } as const;
 
 export type AppTheme = typeof light;

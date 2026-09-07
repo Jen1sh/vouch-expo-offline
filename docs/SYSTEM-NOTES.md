@@ -156,9 +156,42 @@ Two persistence layers with different jobs:
   `src/realtime/dedupe.ts` is the consumer-side seen-id reducer. The Dev Panel's
   "Force a match / duplicate" buttons drive both, and the event feed line shows
   received vs applied (the visible proof dedupe works).
-- **Scope note:** every knob is live; "Dump outbox contents" and "Wipe local
-  data" render disabled until the outbox milestone lands. Seed data (e.g. the
-  60-profile catalog) is NOT in the DB — it is a mocks-milestone concern;
-  `ensureMigrated()` only applies schema.
+- **Scope note:** every knob is live. Seed data (e.g. the 60-profile catalog)
+  is NOT in the DB — it is mocks-milestone seed (deterministic, asserted by a
+  unit test); `ensureMigrated()` only applies schema.
 - Web bundling still works (wasm assetExts + no-dependency mocks); verified via
   `npx expo export --platform web`.
+
+## Discover deck, outbox, and undoing swipes
+
+- **Deck (§3.3):** `app/(protected)/(member)/(tabs)/index.tsx` renders
+  `src/features/discover/components/DiscoverScreen.tsx` (not a placeholder
+  anymore). Hand-written gesture/spring deck in `CardDeck.tsx` — no third-party
+  swipe lib, no `setState` per frame; all motion is Reanimated shared values.
+  Right=like, left=skip, up=ask-voucher, small drag springs back; "fling" lowers
+  the distance bar. `undo` restores exactly one card. Explicit empty state
+  (`DeckEmptyState`) with "Browse again" and an undo of the last card. Toolbar
+  buttons are the a11y alternative to gestures (icons: `heart.fill`,
+  `xmark`, `arrow.up`, `arrow.uturn.backward`, `verified-user` in
+  `components/ui/icon-symbol.tsx`). RTL mirrors horizontal swipe semantics via
+  `I18nManager.isRTL` in both `model/deck.ts` and the render exit.
+  `git grep DECK_VISIBLE_SLOTS` → 3 under-cards.
+- **Catalog (§4.4):** `src/mocks/seed/profiles.ts` deterministically seeds 60
+  profiles with ≥3 photos each (asserted in `profiles.test.ts`). It is seed, not
+  DB; `useDiscoverDeck` builds `profilesById` from it and prefetches the next 4
+  `Image.prefetch` links.
+- **Outbox (§4.1) — now live:** every swipe/undo writes `outbox_items` +
+  `swipes` mirror atomically (`src/outbox/actions.ts`); the drain
+  (`src/outbox/drain.ts`, single-flight, FIFO `queued→sending` claim) replays
+  through `mocks/server.ts` `request()` with exponential backoff (`backoff.ts`:
+  1s base, 30s cap, ±20% jitter, 5 attempts → `failed`). The walker triggers on
+  enqueue, AppState foreground, and offline→online. Offline just pauses (Pill:
+  "Offline — swipes queued"). Dev Panel's **Dump outbox contents** now lists
+  items + statuses (Refresh), and **Wipe local data** clears outbox + swipes via
+  a confirm Alert. Design details + conflict rule + measured §4.6 numbers live
+  in `docs/TECHNICAL.md`.
+- **Perf evidence channel:** `src/features/discover/performance.tsx` overlays a
+  Reanimated `PerformanceMonitor` (JS/UI FPS) on the deck in `__DEV__` and logs
+  `[discover.perf] re-renders between swipes` — the numbers go into
+  `TECHNICAL.md`'s measured table. Archive/copy them any time you re-run the
+  deck.

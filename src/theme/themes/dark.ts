@@ -1,4 +1,4 @@
-import { typography, spacing, radius, shadows, fontFamilies } from '../tokens';
+import { typography, spacing, radius, shadows, fontFamilies, durations, spring } from '../tokens';
 
 /**
  * Dark theme for the "Warm Editorial Trust" system — deep slate/charcoal
@@ -90,4 +90,6 @@ export const dark = {
   radius,
   shadows,
   fontFamilies,
+  durations,
+  spring,
 } as const;

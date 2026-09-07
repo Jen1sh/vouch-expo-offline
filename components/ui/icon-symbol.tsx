@@ -21,6 +21,11 @@ const MAPPING = {
   'bookmark.fill': 'bookmark',
   'person.fill': 'person',
   'chevron.right': 'chevron-right',
+  'heart.fill': 'favorite',
+  'xmark': 'close',
+  'arrow.up': 'arrow-upward',
+  'arrow.uturn.backward': 'undo',
+  'checkmark.seal.fill': 'verified-user',
 } as IconMapping;
 
 /**

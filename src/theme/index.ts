@@ -2,8 +2,15 @@ import './unistyles';
 
 export { UnistylesRuntime } from 'react-native-unistyles';
 export { breakpoints } from './breakpoints';
-export { typography, spacing, radius, shadows, fontFamilies } from './tokens';
-export type { TypographyToken, SpacingToken, RadiusToken, ShadowToken } from './tokens';
+export { typography, spacing, radius, shadows, fontFamilies, durations, spring } from './tokens';
+export type {
+  TypographyToken,
+  SpacingToken,
+  RadiusToken,
+  ShadowToken,
+  DurationToken,
+  SpringToken,
+} from './tokens';
 export { light } from './themes/light';
 export { dark } from './themes/dark';
 export type { AppTheme } from './themes/light';

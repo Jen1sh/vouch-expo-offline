@@ -1,17 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, Switch } from 'react-native';
+import { useEffect, useCallback, useRef, useState } from 'react';
+import { Alert, Pressable, ScrollView, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUnistyles } from 'react-native-unistyles';
 
 import Button from '@/components/Button';
 import Text from '@/components/Text';
 import View from '@/components/View';
+import { listOutboxItems, type OutboxItemRow } from '@/src/db/queries/outbox.queries';
 import {
   resetDevPanelControls,
   setDevPanelControls,
   useDevPanelControls,
   type DevPanelControls,
 } from '@/src/mocks/devPanelControls';
+import { isDraining, wipeLocalData } from '@/src/outbox';
 import { createEventDedupe } from '@/src/realtime/dedupe';
 import { forceDuplicateEvent, forceMatchEvent, getLastEmittedEvent, subscribeToRealtime, type RealtimeEvent } from '@/src/realtime/realtimeChannel';
 import { useVerificationCode } from '@/src/hooks/use-verification-code';
@@ -37,9 +39,32 @@ export default function DevPanel() {
   const { code, cooldownRemaining, isCooldown, resend } = useVerificationCode();
   const router = useRouter();
   const [feed, setFeed] = useState<FeedState>({ received: 0, applied: 0, last: getLastEmittedEvent() });
+  const [outbox, setOutbox] = useState<OutboxItemRow[] | null>(null);
   const dedupeRef = useRef(createEventDedupe());
 
+  const refreshOutbox = useCallback(async () => {
+    setOutbox(await listOutboxItems());
+  }, []);
+
+  const confirmWipe = useCallback(() => {
+    Alert.alert(
+      'Wipe local data',
+      'Clears the durable outbox and the swipe mirror. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Wipe',
+          style: 'destructive',
+          onPress: () => {
+            void wipeLocalData().then(() => refreshOutbox());
+          },
+        },
+      ]
+    );
+  }, [refreshOutbox]);
+
   useEffect(() => {
+    void refreshOutbox();
     return subscribeToRealtime((event) => {
       const applied = dedupeRef.current.accept(event);
       setFeed((previous) => ({
@@ -48,7 +73,7 @@ export default function DevPanel() {
         last: event,
       }));
     });
-  }, []);
+  }, [refreshOutbox]);
 
   const update = (patch: Partial<DevPanelControls>) => setDevPanelControls(patch);
 
@@ -169,13 +194,30 @@ export default function DevPanel() {
                 Dump outbox contents
               </Text>
               <Text variant="bodySm" color="textMuted">
-                Arrives with the outbox milestone — the durable write path is built there.
+                {outbox === null
+                  ? 'Loading…'
+                  : outbox.length === 0
+                    ? 'Empty — no queued actions.'
+                    : `${outbox.length} item${outbox.length === 1 ? '' : 's'}${isDraining() ? ' — draining…' : ''}`}
               </Text>
             </View>
-            <Button variant="secondary" size="sm" disabled>
-              Coming soon
+            <Button variant="secondary" size="sm" onPress={refreshOutbox}>
+              Refresh
             </Button>
           </View>
+          {outbox && outbox.length > 0 ? (
+            <View style={styles.feed}>
+              {outbox.slice(0, 10).map((item) => (
+                <Text key={item.id} variant="bodySm" color="textMuted">
+                  {item.type} · {item.status}
+                  {item.attempts > 0 ? ` · ${item.attempts} attempt${item.attempts === 1 ? '' : 's'}` : ''}
+                </Text>
+              ))}
+              {outbox.length > 10 ? (
+                <Text variant="bodySm" color="textMuted">… {outbox.length - 10} more</Text>
+              ) : null}
+            </View>
+          ) : null}
         </Section>
 
         <Section title="Danger zone">
@@ -185,11 +227,11 @@ export default function DevPanel() {
                 Wipe local data
               </Text>
               <Text variant="bodySm" color="textMuted">
-                Clears drizzle tables, codes and the outbox. Wired when the outbox milestone lands.
+                Clears the drizzle-backed outbox and swipe mirror.
               </Text>
             </View>
-            <Button variant="destructive" size="sm" disabled>
-              Disabled
+            <Button variant="destructive" size="sm" onPress={confirmWipe}>
+              Wipe now
             </Button>
           </View>
         </Section>

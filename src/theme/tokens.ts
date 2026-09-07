@@ -191,3 +191,39 @@ export const shadows = {
 } as const;
 
 export type ShadowToken = keyof typeof shadows;
+
+/** Motion timing presets (ms) for the swipe deck and shared transitions. */
+export const durations = {
+  fast: 180,
+  base: 320,
+  slow: 500,
+} as const;
+
+export type DurationToken = keyof typeof durations;
+
+/**
+ * Reanimated spring configs for physical-feeling moments (the swipe deck's
+ * return-to-center and fly-out). Values are passed straight to `withSpring`.
+ */
+export const spring = {
+  /** Cancelled drag: quick, settled rebound toward the center line. */
+  snapBack: {
+    damping: 22,
+    stiffness: 240,
+    mass: 0.7,
+    overshootClamping: false,
+    restDisplacementThreshold: 0.01,
+    restSpeedThreshold: 0.01,
+  },
+  /** Decided swipe: decisive fly-out with overshoot clamped to one direction. */
+  dismiss: {
+    damping: 18,
+    stiffness: 340,
+    mass: 0.8,
+    overshootClamping: true,
+    restDisplacementThreshold: 0.01,
+    restSpeedThreshold: 0.01,
+  },
+} as const;
+
+export type SpringToken = keyof typeof spring;

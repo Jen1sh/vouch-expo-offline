@@ -8,9 +8,11 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { startOutboxWatcher } from "@/src/outbox";
 import DevPanelFab from "@/src/devpanel/DevPanelFab";
 import { AuthProvider } from "@/src/features/auth/context/AuthProvider";
 import { useAuth } from "@/src/features/auth/context/use-auth";
@@ -25,6 +27,10 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    startOutboxWatcher();
+  }, []);
 
   const [fontsLoaded, fontError] = useFonts({
     "Newsreader-Regular": require("@/assets/fonts/Newsreader_9pt-Regular.ttf"),
@@ -44,15 +50,17 @@ export default function RootLayout() {
   const navigationTheme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
 
   return (
-    <ThemeProvider value={navigationTheme}>
-      <AuthProvider>
-        <AppModeProvider>
-          <AppNavigator />
-        </AppModeProvider>
-      </AuthProvider>
-      <DevPanelFab />
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={navigationTheme}>
+        <AuthProvider>
+          <AppModeProvider>
+            <AppNavigator />
+          </AppModeProvider>
+        </AuthProvider>
+        <DevPanelFab />
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
 
