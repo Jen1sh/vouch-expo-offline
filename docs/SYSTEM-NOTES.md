@@ -1,4 +1,4 @@
-# System Notes — Auth, Routing, Onboarding Persistence, Dev Panel
+# System Notes — Auth, Routing, Onboarding Persistence, Dev Panel, Navigation Modes
 
 Operational notes on the sign-in/session layer and the onboarding flow. NOT an
 onboarding doc; this is the "why you did it that way" record for debugging and
@@ -40,12 +40,23 @@ Two persistence layers with different jobs:
 
 - Root `app/_layout.tsx` uses `Stack.Protected`: `signedIn` → `(protected)`,
   `signedOut` → `(auth)`. There is no global `modal` screen anymore.
-- `app/(protected)/_layout.tsx` is the post-auth gate: it reads
-  `onboardingStatus` and renders **either** `onboarding` (incomplete) **or**
-  `(tabs)` + `modal` (complete) — never both. The onboarding screens are only
-  in the navigator while incomplete.
+- `app/(protected)/_layout.tsx` is the post-auth gate. Order of guards:
+  `onboarding (incomplete)`, then **either** `(member)` (mode `member`) **or**
+  `(voucher)` (mode `voucher`) — never both. The two trees are genuinely
+  separate route groups (REQUIREMENTS §2.2/§3.7): member = 4 tabs (Discover /
+  Browse / Chat / Settings) + pushed `profile/[userId]`; voucher = 3 tabs
+  (Browse / Shortlist / Settings) + pushed `thread/[vouchId]`. Because the
+  `(voucher)` group physically has no chat route, a voucher cannot reach a 1:1
+  chat at the navigation level — that is the structural half of the guarantee.
+- The swap lives in Settings (`src/features/settings/components/SettingsScreen.tsx`,
+  used by BOTH trees — flipping mode back to member is how a voucher exits).
+  `mode` is app state (`src/store/mode/AppModeProvider.tsx`), **not persisted**:
+  relaunch always starts in member mode.
 - `(protected)` is a route group, so its screens sit at the root of the URL
-  space: `/` (tabs home), `/modal`, `/onboarding`.
+  space: `/` (member tabs home), `/browse`, `/settings`, `/shortlist`,
+  `/chat/[matchId]`, `/profile/[userId]`, `/thread/[vouchId]`, `/onboarding`.
+  Both trees share `/browse` and `/settings` URLs — only the active tree is
+  mounted, so resolution follows the current mode.
 - `unstable_settings.anchor` is `(protected)`. Typed routes regenerate only via
   `npx expo start` (not `expo export`).
 
@@ -84,6 +95,19 @@ Two persistence layers with different jobs:
   `getMyProfile()` to derive `onboardingStatus`. `markOnboardingComplete()`
   writes the DB row then flips state; the protected layout then swaps
   onboarding for the tabs.
+- `AppModeContext` (`src/store/mode/AppModeProvider.tsx`) + `useAppMode()`:
+  `mode: 'member' | 'voucher'`, `setMode(next)`. In-memory only (no layer for
+  persistence that isn't relational, and the spec doesn't demand it) — the
+  member tree's own UI state comes from SQLite and therefore survives a switch,
+  which is what §2.2 actually requires.
+
+## Mode enforcement gap (known, owned)
+
+- Per REQUIREMENTS §3.7 the chat **service layer** must also refuse 1:1
+  chat-send/read for a voucher-mode caller, independent of the missing route.
+  No chat service exists yet (outbox/chat milestone); this is a documented gap,
+  not a code TODO — it will land with the send/read actions and be cross-checked
+  against the voucher tree during the interruption-safety pass.
 
 ## Splash screen
 

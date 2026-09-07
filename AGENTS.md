@@ -25,7 +25,7 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v54.0.0/ before 
 ## Conventions
 
 - Theming is set up via **react-native-unistyles** in `src/theme/` (`tokens.ts`, `themes/light.ts` + `dark.ts`, `breakpoints.ts`, `unistyles.ts` config, barrel `index.ts`). Fonts (Newsreader + Plus Jakarta Sans) load in `app/_layout.tsx` via `expo-font`. Use themed `StyleSheet.create(theme => …)`; use `useTheme()` only for raw tokens passed to non-style props. `constants/theme.ts` and `hooks/use-theme-color.ts` were removed — don't reintroduce them.
-- Starter files (hello-wave, parallax-scroll-view, explore tab, modal) are still default template code, not real features. Don't treat them as canonical.
+- Starter files (hello-wave, parallax-scroll-view, explore tab, modal) were default template code and have been removed — they were never real features. Don't treat template remnants as canonical.
 - `CLAUDE.md` just imports `@AGENTS.md`; keep their guidance in sync.
 
 ## Work references (authoritative for this repo)

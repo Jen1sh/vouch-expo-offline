@@ -14,6 +14,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import DevPanelFab from "@/src/devpanel/DevPanelFab";
 import { AuthProvider } from "@/src/features/auth/context/AuthProvider";
 import { useAuth } from "@/src/features/auth/context/use-auth";
+import { AppModeProvider } from "@/src/store/mode/AppModeProvider";
 import "@/src/theme/unistyles";
 
 SplashScreen.preventAutoHideAsync();
@@ -45,7 +46,9 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={navigationTheme}>
       <AuthProvider>
-        <AppNavigator />
+        <AppModeProvider>
+          <AppNavigator />
+        </AppModeProvider>
       </AuthProvider>
       <DevPanelFab />
       <StatusBar style="auto" />
