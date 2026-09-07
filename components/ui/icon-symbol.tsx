@@ -29,6 +29,8 @@ const MAPPING = {
   'arrow.up': 'arrow-upward',
   'arrow.uturn.backward': 'undo',
   'checkmark.seal.fill': 'verified-user',
+  'checkmark': 'done',
+  'paperplane.fill': 'send',
 } as IconMapping;
 
 /**

@@ -129,6 +129,46 @@ export async function listCatalogPage(input: {
 }
 
 /**
+ * Single catalog profile by id (used by the chat header/thread to render the
+ * match's partner name and avatar). Returns undefined when the profile isn't
+ * in the catalog mirror.
+ */
+export async function getCatalogProfileById(id: string): Promise<CatalogBrowseItem | undefined> {
+  const [row] = await db
+    .select({
+      id: catalogProfiles.id,
+      firstName: catalogProfiles.firstName,
+      lastName: catalogProfiles.lastName,
+      age: catalogProfiles.age,
+      city: catalogProfiles.city,
+      distanceKm: catalogProfiles.distanceKm,
+      verified: catalogProfiles.verified,
+      occupation: catalogProfiles.occupation,
+      bio: catalogProfiles.bio,
+    })
+    .from(catalogProfiles)
+    .where(eq(catalogProfiles.id, id))
+    .limit(1);
+  if (!row) {
+    return undefined;
+  }
+  const [photo] = await db
+    .select({ uri: catalogProfilePhotos.uri })
+    .from(catalogProfilePhotos)
+    .where(and(eq(catalogProfilePhotos.profileId, id), eq(catalogProfilePhotos.position, 0)))
+    .limit(1);
+  const interests = await db
+    .select({ tag: catalogProfileInterests.tag })
+    .from(catalogProfileInterests)
+    .where(eq(catalogProfileInterests.profileId, id));
+  return {
+    ...row,
+    photoUri: photo?.uri ?? "",
+    interests: interests.map((entry) => entry.tag),
+  };
+}
+
+/**
  * Idempotent one-time seed: if the catalog table is empty, load all 60 seeded
  * profiles (+ normalized interests/photos) inside a single transaction. Safe to
  * call on every Browse focus — it is a no-op once the catalog exists.

@@ -101,13 +101,18 @@ Two persistence layers with different jobs:
   member tree's own UI state comes from SQLite and therefore survives a switch,
   which is what §2.2 actually requires.
 
-## Mode enforcement gap (known, owned)
+## Mode enforcement (chat service guard)
 
-- Per REQUIREMENTS §3.7 the chat **service layer** must also refuse 1:1
-  chat-send/read for a voucher-mode caller, independent of the missing route.
-  No chat service exists yet (outbox/chat milestone); this is a documented gap,
-  not a code TODO — it will land with the send/read actions and be cross-checked
-  against the voucher tree during the interruption-safety pass.
+- Per REQUIREMENTS §3.7 the chat **service layer** refuses 1:1 chat-send/
+  delete for a voucher-mode caller, independent of the missing route: the
+  (voucher) tree physically has no chat routes, and `src/outbox/messages.ts`
+  `assertCanMessage()` throws unless `getModeSnapshot() === 'member'`.
+- The snapshot (`src/store/mode/mode-snapshot.ts`) is set to `'member'` by
+  default at module load and always kept in sync by `AppModeProvider.setMode()`
+  (`setMode('voucher')` flips the snapshot too). So even a future route/url
+  trick cannot reach the message enqueue from voucher mode.
+- `MessageComposer` also disables itself when the snapshot isn't member
+  (defense-in-depth; the route group already blocks navigation).
 
 ## Splash screen
 
@@ -124,6 +129,51 @@ Two persistence layers with different jobs:
 - Everything under `(auth)` is unprotected; everything else requires
   `signedIn`. If the gate misbehaves, start at the `Stack.Protected` guards in
   `app/_layout.tsx` and `app/(protected)/_layout.tsx`.
+
+## Chat — matches, threads, outbox, simulated realtime
+
+- **Routes:** `app/(protected)/(member)/(tabs)/chat/_layout.tsx` (stack: header
+  hidden list + pushed `[matchId]` whose `Stack.Screen` title is the partner's
+  name via the thread hook). `chat/index.tsx` → `MatchesScreen`;
+  `chat/[matchId].tsx` → `ThreadScreen`. Feature code lives in
+  `src/features/chat/` (`model/`, `store/`, `hooks/`, `realtime/`,
+  `components/`).
+- **Schema §4.x:** migration `0004_fast_scarecrow.sql` adds `matches`
+  (unique `profileId`) and `messages` (`status`, `outboxItemId`, index on
+  `(matchId, createdAt)`). Writes route through the outbox only; the mirror
+  helpers pair a message row and its `outbox_items` row in one transaction.
+- **Writes (§3.6):** `sendMessage(matchId, text)` (member-guarded assert)
+  inserts message + outbox item atomically and bumps the single-flight drain.
+  Statuses travel `queued → sending → sent/failed`, surfaced per bubble by the
+  in-memory mirror (`store/message-status.ts`, `useSyncExternalStore`
+  per-message id) so drain progress never re-renders the list. Failed bubbles
+  expose Retry (`retryFailedMessage`) and Delete (`deleteMessage`,
+  failed/queued only).
+- **Matches list:** `ListMatches` join renders avatar/name/verified, the latest
+  preview (with `You:` prefix when the newest row is ours — including its
+  in-flight transport caption), a relative timestamp, and the unread pill
+  (`unreadCount` from a `lastReadAt` watermark sweep). Opening a thread marks it
+  read and the pill collapses.
+- **Thread UX:** newest-first state + `scaleY(-1)`-flipped FlashList (FlashList
+  2.0.2 dropped `inverted`) so index 0 is the visual bottom; scroll-to-top pages
+  older history via keyset `(createdAt, id)`. `maintainVisibleContentPosition`
+  keeps the view pinned while chatting; the partner typing indicator renders in
+  the flipped header. Dev Panel buttons drive arrivals ("Force incoming
+  message") and a 3.5 s typing bubble ("Simulate typing").
+- **Matches also materialize from likes:** after a `like` drains,
+  `src/mocks/reciprocity.ts` deterministically "likes back" a fixed subset and
+  emits a real `matches:new` through the realtime channel; the chat subscriber
+  (`src/features/chat/realtime/chatRealtime.ts`, started once in
+  `app/_layout.tsx`) reconciles it exactly like a server push.
+- **Auto-reply (Dev Panel knob, default off):** when on, each drained message
+  schedules a partner `messages:new` (sender omitted on the wire; the consumer
+  resolves it from the match) after a 2.5–6 s delay. It travels the real
+  unreliable channel (dedupe/duplicate/out-of-order), never a direct DB write.
+- **Demo seed:** `seedChatIfEmpty()` guarantees three conversations re-created
+  after **Wipe local data**: `match-seed-treasure` (55 messages → paging),
+  `match-seed-saturday` (2 unread), `match-seed-book` (read).
+- Details, the outbox/drain pairing, and the test sweep live in
+  `docs/TECHNICAL.md`.
 
 ## Dev Panel & simulated network
 

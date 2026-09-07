@@ -1,4 +1,4 @@
-# Technical Notes — Discover Deck, Outbox, Browse (FlashList + SQLite pagination), and Performance (§4.6 evidence)
+# Technical Notes — Discover Deck, Outbox, Browse (FlashList + SQLite pagination), Chat, and Performance (§4.6 evidence)
 
 Design decisions, invariants, and measurement channel for the swipe deck and the
 durable write path. Requirements references point at `REQUIREMENTS.md`.
@@ -230,6 +230,114 @@ the tab — no state to save or restore. The only explicit scroll call is
 `scrollToOffset(0)` when filters change, so a narrowed result set doesn't park
 the user mid-list. Verified on device during the QA pass.
 
+## Chat — matches, threads, outbox, simulated realtime (§3.6, §4.3)
+
+Chat is build on the same durable-write + simulated-realtime rails as Browse:
+the SQLite mirror is the source of truth, the outbox is the only write path, and
+"the server" is `src/mocks` + `src/realtime`.
+
+### Durable layers
+
+- **Migration `0004_fast_scarecrow.sql`** adds `matches` and `messages`.
+  `matches`: `{ id, profileId (FK catalog_profiles), lastReadAt, createdAt }`,
+  unique `profileId` (one match per profile). `messages`:
+  `{ id, matchId (FK → matches, cascade delete), senderId, body, status,
+  outboxItemId (nullable FK), createdAt, updatedAt }` with index on
+  `(matchId, createdAt)` — the keyset-paging column pair. Message statuses are
+  `queued | sending | sent | failed`, set only by the drain helpers (below).
+- **Mirror queries** (`src/db/queries/messages.queries.ts`): `insertMessage`,
+  `listMessagesPage` (key/none — NEWEST-FIRST keyset by `(createdAt, id)` with
+  `before`), `getMessage`, `getMessageForOutboxItem(outboxItemId)`,
+  `transitionMessageToSending`, and the paired atomic helpers
+  `markMessageSent` / `failMessageSend` / `rescheduleMessageSend` /
+  `requeueMessageSend` / `deleteMessageWithOutbox` — each flips the outbox item
+  and the message row inside the **same transaction** (CONVENTIONS single-write
+  rule; a message can never show `sent` while its outbox row is still `queued`).
+- **Matches queries** (`matches.queries.ts`): `upsertMatch`,
+  `setMatchRead` (the `lastReadAt` watermark), and `listMatches` — one ordered
+  sweep over `messages` computes each row's `unreadCount` (incoming rows
+  `senderId != 'me'` with `createdAt > lastReadAt`), the latest preview +
+  `lastMessageSenderId` (+ its transport status for the "You: sending…" caption),
+  and the partner photo from `catalog_profile_photos` (position 0). Client-side
+  JS on one sorted loop — fine at demo scale.
+
+### The chat write path
+
+- `outbox/actions.ts` gains `sendMessage { matchId, messageId, body }`.
+  `src/outbox/messages.ts` is the feature-facing API: `sendMessage(matchId,
+  body)` asserts member mode (`getModeSnapshot()` from the voucher guard, §3.7),
+  inserts the message row + outbox item in one transaction, sets the UI status
+  mirror to `queued`, and bumps the drain. `retryFailedMessage` (re-write the
+  message row to `queued` + its outbox item to `queued` again) and
+  `deleteMessage` (failed/queued only) complete the set.
+- `src/outbox/drain.ts` learns `sendMessage`: on claim it flips the linked
+  message to `sending` (mirror + row, transactional `onClaimed` callback); on
+  success it calls `markMessageSent` + mirror `sent`; on network-offline it
+  leaves the item **`sending`** and the next drain start recovers stale in-flight
+  items to `queued` first (`recoverInFlightItems` in `outbox.queries.ts`); on
+  failure it backoffs then gives up → `failMessageSend` + mirror `failed`, which
+  surfaces the bubble's Retry/Delete. `attemptDrain` ordering stays strict FIFO.
+- **UI status mirror** (`src/features/chat/store/message-status.ts`): a
+  `Map<messageId, status>` written by enqueue, drain outcome, retry, and delete.
+  `useMessageStatus(id)` uses `useSyncExternalStore` with a per-message listener
+  set, so a single bubble re-renders when *its* status changes — the same
+  narrow-selector isolation as `useUserSwipe`. The per-`messageId` subscription
+  means the inverted FlashList never re-renders on drain progress.
+
+### Thread UX
+
+- **Inverted layout without `inverted`**: FlashList 2.0.2 removed the `inverted`
+  prop (verified in its `.d.ts`). The thread instead flips the list with
+  `transform: scaleY(-1)` and each rendered cell/Hartheader/footer back with
+  `scaleY(-1)`, so index 0 is the visual bottom, `scrollToOffset(0)` is "scroll
+  to latest", and `maintainVisibleContentPosition` (default on) keeps the
+  finally-pinned read position while older pages append behind.
+- **Paging** (`src/features/chat/hooks/useThread.ts`): `THREAD_PAGE_SIZE = 30`,
+  newest-first state. Realtime/message writes bump a revision counter
+  (`thread-revision.ts`); the hook re-fetches the newest page and merges with
+  `mergeNewest` (incoming rows win the front, held rows kept behind — older pages
+  never drop). Scrollup triggers `loadOlder` → `listMessagesPage(before = oldest
+  held)` → `appendOlder` (older never overrides an in-view row). Model is pure
+  (`src/features/chat/model/thread.ts`), fully unit-tested.
+- **Mark-read on focus**: opening/examining a thread calls `setMatchRead` and
+  refreshes the matches list (the unread pill collapses); it is safe to call
+  repeatedly. `watchMatches` mirrors the list so the tab reads reactively.
+- **Send → UI**: `sendMessage` → optimistic row (queued) appears at the bottom via
+  the revision merge, the mirror drives `Sending…` → `Sent`/`Not delivered`
+  without touching the list, and `MessageComposer` clears immediately.
+
+### Simulated realtime (chat half, §4.3)
+
+- `src/realtime/realtimeChannel.ts` now emits `matches:new { matchId, profileId }`,
+  `messages:new { messageId, senderId?, body, matchId }` (sender `optional` — the
+  partner reply lleaves it out so the consumer resolves it), `typing { matchId }`,
+  and `profiles:updated`. All events carry `id` for the dedupe.
+- `src/features/chat/realtime/chatRealtime.ts` is the single subscriber owning
+  the chat tables, started once from `app/_layout.tsx`, idempotent. It
+  `ensureMigrated` + `seedChatIfEmpty` first (guaranteed demo threads), then
+  dedupes every event by `id` before touching the DB. `messages:new` skips rows
+  that already exist — the optimistic echo of our own sent — and drops events
+  whose `matchId` isn't in `matches` (no orphan rows). `typing` goes to
+  `src/features/chat/store/typing.ts` (auto-clear after 3500 ms).
+- **Match creation**: after a `like` drains, `src/mocks/reciprocity.ts` decides
+  deterministically (`seedIndex % 3 === 0 || % 5 === 0`) whether the profile
+  "likes back" and emits a real `matches:new` through the channel — the same path
+  a genuine backend would use, so the client reconciles uniformly.
+- **Partner reply**: the Dev Panel `autoReply` toggle (default **off**) gates
+  `src/mocks/partnerReply.ts`; when on, each drained `sendMessage` schedules a
+  `messages:new` after a 2.5–6 s delay. So incoming messages travel the real,
+  deliberately-unreliable channel (dedupe, out-of-order window, duplicate rate)
+  rather than a fake timer writing to the DB directly. Manual "Force incoming
+  message" / "Simulate typing" buttons in the Dev Panel emit to the newest match.
+
+### Demo seed
+
+`seedChatIfEmpty` (`src/db/queries/chat.queries.ts`) is idempotent and always
+present after wipe: `match-seed-treasure` (55 messages over ~14 days → exercises
+paging), `match-seed-saturday` (6 messages, 2 unread), `match-seed-book`
+(4 messages, read). Partners are `SEED_PROFILES[0..2]`, all rows `status =
+'sent'`, no outbox linkage.
+
 ## Test suite (jest-expo)
 
 - `src/features/discover/model/deck.test.ts` — deck state machine, threshold
@@ -250,7 +358,15 @@ the user mid-list. Verified on device during the QA pass.
 - `src/features/browse/components/BrowseFilterBar.test.tsx` — trigger opens
   bottom sheet, age steppers, distance chip select/reset, verified switch
   inside the modal, Done and scrim close.
+- Chat: `src/features/chat/model/thread.test.ts` (merge/paging ordering + dedupe),
+  `store/message-status.test.ts` + `store/typing.test.ts` + `store/matches.test.ts`
+  (mirror isolation, 3500 ms auto-clear, store hydrate), `realtime/chatRealtime.test.ts`
+  (dedupe, optimistic-echo skip, unknown-match drop, matches/typing reconcile),
+  `mocks/reciprocity.test.ts` (determinism) and `mocks/partnerReply.test.ts`
+  (auto-reply gate), plus component tests for `MatchRow`, `MessageBubble` (4
+  transport states), and `MessageComposer`.
 
-Run with `npm test`. (Integration tests for the drain's ordering and the
-`=FailedOutboxItems` stream are deferred to the realtime/reconciliation pass — a
-documented gap, not an omission: the drain is only exercised on device today.)
+Run with `npm test`. (Integration tests for the drain's ordering while a chat
+thread is live and the `=FailedOutboxItems` stream are deferred — the drain is
+only exercised on device today; unit tests cover each outcome branch via the
+paired mirror helpers.)

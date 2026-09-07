@@ -10,6 +10,8 @@ import {
   type OutboxItemRow,
 } from "@/src/db/queries/outbox.queries";
 import { deleteAllSwipes, deleteSwipe, getSwipe, upsertSwipe } from "@/src/db/queries/swipes.queries";
+import { deleteAllMatches } from "@/src/db/queries/matches.queries";
+import { deleteAllMessages } from "@/src/db/queries/messages.queries";
 import type { DecisionDirection } from "@/src/db/schema/swipes";
 import { newIdempotencyKey, type OutboxWrite } from "@/src/outbox/actions";
 import { attemptDrain } from "@/src/outbox/drain";
@@ -81,9 +83,15 @@ async function scheduleDrain(): Promise<void> {
   await attemptDrain();
 }
 
-/** Clears every outbox + mirror row (Dev Panel "Wipe local data"). */
+/**
+ * Clears every outbox + mirror row (Dev Panel "Wipe local data"). Chat tables
+ * are cleared too; the deterministic seed (`seedChatIfEmpty`) recreates the
+ * three demo matches on the next launch so the demo is always present.
+ */
 export async function wipeLocalData(): Promise<void> {
   await ensureMigrated();
   await deleteAllOutboxItems();
   await deleteAllSwipes();
+  await deleteAllMessages();
+  await deleteAllMatches();
 }

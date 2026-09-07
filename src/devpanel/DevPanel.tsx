@@ -14,8 +14,17 @@ import {
   type DevPanelControls,
 } from '@/src/mocks/devPanelControls';
 import { isDraining, wipeLocalData } from '@/src/outbox';
+import { listMatches } from '@/src/db/queries/matches.queries';
 import { createEventDedupe } from '@/src/realtime/dedupe';
-import { forceDuplicateEvent, forceMatchEvent, getLastEmittedEvent, subscribeToRealtime, type RealtimeEvent } from '@/src/realtime/realtimeChannel';
+import {
+  forceDuplicateEvent,
+  forceIncomingMessage,
+  forceMatchEvent,
+  getLastEmittedEvent,
+  simulateTyping,
+  subscribeToRealtime,
+  type RealtimeEvent,
+} from '@/src/realtime/realtimeChannel';
 import { useVerificationCode } from '@/src/hooks/use-verification-code';
 import { StyleSheet } from '@/src/theme';
 // useUnistyles: pure-leaf escape hatch — raw theme colors for the native
@@ -78,6 +87,30 @@ export default function DevPanel() {
   const update = (patch: Partial<DevPanelControls>) => setDevPanelControls(patch);
 
   const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
+
+  /** Target the most-recent match so the Dev buttons always have a destination. */
+  const newestMatchId = useCallback(async (): Promise<string | null> => {
+    const matches = await listMatches();
+    return matches[0]?.id ?? null;
+  }, []);
+
+  const sendTestIncoming = useCallback(async () => {
+    const matchId = await newestMatchId();
+    if (!matchId) {
+      Alert.alert('No matches yet', 'Create a match before sending a test message.');
+      return;
+    }
+    await forceIncomingMessage(matchId);
+  }, [newestMatchId]);
+
+  const sendTestTyping = useCallback(async () => {
+    const matchId = await newestMatchId();
+    if (!matchId) {
+      Alert.alert('No matches yet', 'Create a match before simulating typing.');
+      return;
+    }
+    await simulateTyping(matchId);
+  }, [newestMatchId]);
 
   return (
     <View style={styles.screen}>
@@ -185,6 +218,26 @@ export default function DevPanel() {
             </Button>
           </View>
           <EventFeed feed={feed} />
+        </Section>
+
+        <Section title="Chat">
+          <ToggleRow
+            label="Auto-reply"
+            caption="Partners answer your messages after a short delay (disabled by default)."
+            value={controls.autoReply}
+            onValueChange={(autoReply) => update({ autoReply })}
+          />
+          <View style={styles.actionsRow}>
+            <Button variant="secondary" size="sm" onPress={() => void sendTestIncoming()}>
+              Force incoming message
+            </Button>
+            <Button variant="secondary" size="sm" onPress={() => void sendTestTyping()}>
+              Simulate typing
+            </Button>
+          </View>
+          <Text variant="bodySm" color="textMuted">
+            Sent to your most recent match. Typing clears itself after a moment.
+          </Text>
         </Section>
 
         <Section title="Outbox">

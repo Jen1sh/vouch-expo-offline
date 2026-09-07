@@ -1,15 +1,16 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from "expo-router";
 
-import PlaceholderScreen from '@/components/placeholder-screen';
+import { ThreadScreen } from "@/src/features/chat/components/ThreadScreen";
+import { useThread } from "@/src/features/chat/hooks/useThread";
 
 export default function ChatThreadScreen() {
   const { matchId } = useLocalSearchParams<{ matchId: string }>();
+  const { partner } = useThread(matchId);
 
   return (
-    <PlaceholderScreen
-      icon="message.fill"
-      title="Thread"
-      caption={`Optimistic 1:1 messages for match "${matchId}" land here.`}
-    />
+    <>
+      <Stack.Screen options={{ title: partner?.name ?? "Thread", headerBackTitle: "Chat" }} />
+      <ThreadScreen matchId={matchId} />
+    </>
   );
 }

@@ -1,0 +1,13 @@
+export { default as MatchesScreen } from "@/src/features/chat/components/MatchesScreen";
+export { default as MatchRow } from "@/src/features/chat/components/MatchRow";
+export { default as MatchesEmptyState } from "@/src/features/chat/components/MatchesEmptyState";
+export { default as ThreadScreen } from "@/src/features/chat/components/ThreadScreen";
+export { default as MessageBubble } from "@/src/features/chat/components/MessageBubble";
+export { default as MessageComposer } from "@/src/features/chat/components/MessageComposer";
+export { useThread, THREAD_PAGE_SIZE } from "@/src/features/chat/hooks/useThread";
+export * from "@/src/features/chat/model/thread";
+export * from "@/src/features/chat/store/matches";
+export * from "@/src/features/chat/store/message-status";
+export * from "@/src/features/chat/store/thread-revision";
+export * from "@/src/features/chat/store/typing";
+export { startChatRealtime } from "@/src/features/chat/realtime/chatRealtime";

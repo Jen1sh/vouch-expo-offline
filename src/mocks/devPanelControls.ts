@@ -18,6 +18,8 @@ export type DevPanelControls = {
   duplicateRate: number;
   /** How many events the realtime channel may hold back / reorder. */
   outOfOrderWindow: number;
+  /** When ON, a drained message makes the partner reply via the realtime channel. */
+  autoReply: boolean;
 };
 
 export const DEFAULT_CONTROLS: DevPanelControls = {
@@ -27,6 +29,7 @@ export const DEFAULT_CONTROLS: DevPanelControls = {
   writeFailureRate: 0.2,
   duplicateRate: 0.05,
   outOfOrderWindow: 2,
+  autoReply: false,
 };
 
 let controls: DevPanelControls = DEFAULT_CONTROLS;

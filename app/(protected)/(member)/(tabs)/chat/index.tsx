@@ -1,11 +1,5 @@
-import PlaceholderScreen from '@/components/placeholder-screen';
+import { MatchesScreen } from "@/src/features/chat/components/MatchesScreen";
 
 export default function ChatMatchesScreen() {
-  return (
-    <PlaceholderScreen
-      icon="message.fill"
-      title="Chat"
-      caption="Your matches and their unread conversations will appear here."
-    />
-  );
+  return <MatchesScreen />;
 }

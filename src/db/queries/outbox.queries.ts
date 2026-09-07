@@ -39,10 +39,14 @@ export async function getOutboxItem(client: DbClient, id: string): Promise<Outbo
  * flips it to `sending` inside its own transaction so a crash mid-request can
  * never leave two workers sending the same item. Returns null when nothing is
  * due. Ordered by `createdAt` — the queue drains strictly in write order.
+ * `onClaimed` runs inside the same transaction (after the flip) so a linked
+ * mirror row — e.g. a chat message's visible state — becomes `sending`
+ * atomically with the outbox claim.
  */
 export async function claimNextDueItem(
   now: Date,
-  client: DbClient = db
+  client: DbClient = db,
+  onClaimed?: (tx: DbTx, claimed: OutboxItemRow) => Promise<void>
 ): Promise<OutboxItemRow | null> {
   return client.transaction(async (tx) => {
     const [row] = await tx
@@ -66,8 +70,34 @@ export async function claimNextDueItem(
       .set({ status: "sending", updatedAt: now })
       .where(eq(outboxItems.id, row.id));
 
+    if (onClaimed) {
+      await onClaimed(tx, row);
+    }
+
     return row;
   });
+}
+
+/**
+ * Recovery for items left in `sending` by a previous drain — a hard kill
+ * mid-request or an offline interrupt. Marks them `queued` and immediately due
+ * again at every drain start, so a relaunch (or a later drain) picks them up
+ * exactly once. Returns the recovered rows so the drain worker can mirror any
+ * linked message status back to `queued` (the two writes are idempotent and
+ * self-heal on the next drain if a crash lands between them).
+ */
+export async function recoverInFlightItems(now: Date): Promise<OutboxItemRow[]> {
+  const rows = await db.select().from(outboxItems).where(eq(outboxItems.status, "sending"));
+  if (rows.length === 0) {
+    return [];
+  }
+  for (const row of rows) {
+    await db
+      .update(outboxItems)
+      .set({ status: "queued", nextAttemptAt: null, updatedAt: now })
+      .where(eq(outboxItems.id, row.id));
+  }
+  return rows;
 }
 
 export function markOutboxItemDone(id: string, doneAt: Date): Promise<unknown> {

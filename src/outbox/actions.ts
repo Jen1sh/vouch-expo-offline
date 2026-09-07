@@ -12,14 +12,17 @@ export type OutboxAction =
   | { type: "skip"; profileId: string }
   | { type: "askVoucher"; profileId: string }
   /** Compensating write when Undo fired after the original decision already left the queue. */
-  | { type: "undoDecision"; profileId: string };
+  | { type: "undoDecision"; profileId: string }
+  /** Optimistic chat message; the linked `messages` row carries the send state. */
+  | { type: "sendMessage"; matchId: string; messageId: string; body: string };
 
 export type OutboxActionType = OutboxAction["type"];
 
 /** Payload-only shape persisted in `outbox_items.payload` next to `type`. */
 export type OutboxActionPayload =
   | { profileId: string; direction: DecisionDirection }
-  | { profileId: string };
+  | { profileId: string }
+  | { matchId: string; messageId: string; body: string };
 
 /** One fully-formed outbox write, complete with durable identity. */
 export type OutboxWrite = {
@@ -43,5 +46,7 @@ export function toPayload(action: OutboxAction): OutboxActionPayload {
       return { profileId: action.profileId, direction: action.type };
     case "undoDecision":
       return { profileId: action.profileId };
+    case "sendMessage":
+      return { matchId: action.matchId, messageId: action.messageId, body: action.body };
   }
 }

@@ -13,6 +13,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { startOutboxWatcher } from "@/src/outbox";
+import { startChatRealtime } from "@/src/features/chat/realtime/chatRealtime";
 import DevPanelFab from "@/src/devpanel/DevPanelFab";
 import { AuthProvider } from "@/src/features/auth/context/AuthProvider";
 import { useAuth } from "@/src/features/auth/context/use-auth";
@@ -30,6 +31,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     startOutboxWatcher();
+    startChatRealtime();
   }, []);
 
   const [fontsLoaded, fontError] = useFonts({

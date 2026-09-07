@@ -7,6 +7,8 @@ import {
   type ReactNode,
 } from 'react';
 
+import { setModeSnapshot } from '@/src/store/mode/mode-snapshot';
+
 export type AppMode = 'member' | 'voucher';
 
 type AppModeContextValue = {
@@ -27,6 +29,7 @@ export function AppModeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<AppMode>('member');
 
   const setMode = useCallback((next: AppMode) => {
+    setModeSnapshot(next);
     setModeState(next);
   }, []);
 
