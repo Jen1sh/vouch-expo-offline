@@ -1,10 +1,8 @@
-import { Image } from "expo-image";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useImperativeHandle, useMemo, useRef } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { I18nManager, type LayoutChangeEvent } from "react-native";
+import { scheduleOnRN } from "react-native-worklets";
 import Animated, {
-  runOnJS,
-  useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -36,7 +34,6 @@ import type { Profile } from "@/src/types/profile";
  */
 const DISMISS_SPRING: WithSpringConfig = { damping: 18, stiffness: 340, mass: 0.8, overshootClamping: true };
 const SNAP_SPRING: WithSpringConfig = { damping: 22, stiffness: 240, mass: 0.7, overshootClamping: false };
-const SETTLE_SPRING: WithSpringConfig = { damping: 26, stiffness: 260, mass: 0.8, overshootClamping: false };
 
 export type DeckSlot = {
   profileId: string;
@@ -70,32 +67,38 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
   const tx = useSharedValue(0);
   const ty = useSharedValue(0);
   const scale = useSharedValue(1);
-  const dragging = useSharedValue(0);
 
   const top = slots[0] ? profilesById.get(slots[0].profileId) : undefined;
 
-  // Dynamic values are read through refs so the worklets stay stable.
+  // The front profile is read INSIDE gesture/dismiss worklets, so it must live
+  // in a shared value — a mutable ref captured by a worklet would both warn
+  // ("Tried to modify key `current` …") and freeze the stale snapshot. The
+  // value is refreshed in an effect (never during render — Reanimated's strict
+  // mode flags render-phase writes) so the worklets always see the current
+  // front card. Gestures only ever begin after the commit + effect settle.
+  const topSV = useSharedValue<Profile | null>(top ?? null);
+
+  useEffect(() => {
+    topSV.value = top ?? null;
+  }, [top, topSV]);
+
+  // JS-thread-only refs (never captured by a worklet) for the latest callback
+  // and the one-shot undo entry.
   const onSwipedRef = useRef(onSwiped);
   onSwipedRef.current = onSwiped;
-  const topRef = useRef(top);
-  topRef.current = top;
   const entryRef = useRef(slots[0]?.entry);
   entryRef.current = slots[0]?.entry;
   const swipeInProgress = useRef(false);
 
+  // Stable callbacks scheduled back onto the RN thread via `scheduleOnRN` — no
+  // ref hop, no deprecated `runOnJS` re-export.
   const dispatchSwipe = useCallback((direction: SwipeDirection, profile: Profile) => {
     onSwipedRef.current(direction, profile);
   }, []);
 
-  const dispatchSwipeRef = useRef(dispatchSwipe);
-  dispatchSwipeRef.current = dispatchSwipe;
-
   const releaseSwipeLock = useCallback(() => {
     swipeInProgress.current = false;
   }, []);
-
-  const releaseSwipeLockRef = useRef(releaseSwipeLock);
-  releaseSwipeLockRef.current = releaseSwipeLock;
 
   /** One worklet for every dismissal — gestures and buttons share it. */
   const handleDismiss = useCallback(
@@ -105,31 +108,26 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
       const complete = (finished?: boolean) => {
         'worklet';
         if (finished) {
-          runOnJS(dispatchSwipeRef.current)(direction, profile);
+          scheduleOnRN(dispatchSwipe, direction, profile);
         }
-        runOnJS(releaseSwipeLockRef.current)();
+        scheduleOnRN(releaseSwipeLock);
       };
-      dragging.value = 0;
       tx.value = withSpring(target.x, DISMISS_SPRING, complete);
       ty.value = withSpring(target.y, DISMISS_SPRING);
       scale.value = withSpring(0.92, DISMISS_SPRING);
     },
-    [width, height, dragging, rtl, tx, ty, scale]
+    [width, height, rtl, tx, ty, scale, dispatchSwipe, releaseSwipeLock]
   );
 
   const pan = useMemo(
     () =>
       Gesture.Pan()
         .minDistance(6)
-        .onBegin(() => {
-          dragging.value = 1;
-        })
         .onUpdate((event) => {
           tx.value = event.translationX;
           ty.value = event.translationY;
         })
         .onEnd((event) => {
-          dragging.value = 0;
           const direction = classifySwipe(
             {
               dx: event.translationX,
@@ -139,7 +137,7 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
             },
             rtl
           );
-          const profile = topRef.current;
+          const profile = topSV.value;
           if (direction && profile) {
             handleDismiss(direction, profile);
           } else {
@@ -147,18 +145,15 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
             ty.value = withSpring(0, SNAP_SPRING);
             scale.value = withSpring(1, SNAP_SPRING);
           }
-        })
-        .onFinalize(() => {
-          dragging.value = 0;
         }),
-    [dragging, rtl, tx, ty, scale, handleDismiss]
+    [rtl, tx, ty, scale, handleDismiss, topSV]
   );
 
   useImperativeHandle(
     ref,
     () => ({
       swipe(direction) {
-        const profile = topRef.current;
+        const profile = topSV.value;
         if (!profile || swipeInProgress.current) {
           return;
         }
@@ -166,7 +161,7 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
         handleDismiss(direction, profile);
       },
     }),
-    [handleDismiss]
+    [handleDismiss, topSV]
   );
 
   const rotation = useDerivedValue(() => {
@@ -209,15 +204,25 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
     return Math.max(0, Math.min(1, -ty.value / (VERTICAL_SWIPE_THRESHOLD * 1.4)));
   });
 
+  // 0..1 how far the stack has been dragged toward a dismissal, derived on the
+  // UI thread so the under-cards track the finger continuously. Decays with the
+  // snap-back spring and climbs with the dismissal spring.
+  const travel = useDerivedValue(() => {
+    const distance = Math.abs(tx.value) + Math.abs(ty.value);
+    return Math.min(1, distance / (HORIZONTAL_SWIPE_THRESHOLD * 1.4));
+  });
+
   const frontProfileId = slots[0]?.profileId;
 
   // Reset + entry spring whenever the front card changes (advance, undo).
-  useEffect(() => {
+  // useLayoutEffect (pre-paint) so the newly mounted front card's first frame
+  // already carries its resting transform — no visible kick from the previous
+  // card's leftover shared values.
+  useLayoutEffect(() => {
     const entry = entryRef.current;
     scale.value = entry?.scale ?? 1;
     tx.value = entry?.x ?? 0;
     ty.value = entry?.y ?? 0;
-    dragging.value = 0;
 
     if (entry) {
       if (entry.scale !== undefined && entry.scale !== 1) {
@@ -230,7 +235,7 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
         ty.value = withSpring(0, SNAP_SPRING);
       }
     }
-  }, [frontProfileId, scale, tx, ty, dragging]);
+  }, [frontProfileId, scale, tx, ty]);
 
   const onDeckLayout = useCallback(
     (event: LayoutChangeEvent) => {
@@ -254,7 +259,7 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
         if (!profile) {
           return null;
         }
-        return <StackedCard key={`stacked-${level}`} profile={profile} level={level} dragging={dragging} />;
+        return <StackedCard key={`stacked-${level}`} profile={profile} level={level} travel={travel} />;
       })}
 
       {stack.topSlot && top ? (
@@ -274,36 +279,28 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
 function StackedCard({
   profile,
   level,
-  dragging,
+  travel,
 }: {
   profile: Profile;
   level: number;
-  dragging: SharedValue<number>;
+  travel: SharedValue<number>;
 }) {
-  const progress = useSharedValue(level);
-
-  useEffect(() => {
-    progress.value = withSpring(level, SETTLE_SPRING);
-  }, [level, progress]);
-
-  useAnimatedReaction(
-    () => dragging.value,
-    (drag) => {
-      progress.value = withSpring(level * (1 - drag), SETTLE_SPRING);
-    },
-    [dragging, progress, level]
-  );
-
-  const style = useAnimatedStyle(() => ({
-    transform: [
-      { scale: 1 - progress.value * UNDERCARD_SCALE_STEP },
-      { translateY: progress.value * UNDERCARD_TRANSLATE_STEP },
-    ],
-  }));
+  const style = useAnimatedStyle(() => {
+    // Continuous depth: fully seated at level, thinning as the stack is
+    // dragged. Mirrors the front card's spring on snap-back/dismiss because it
+    // is a pure function of `travel`, which follows `tx`/`ty`.
+    const depth = level * (1 - travel.value);
+    return {
+      transform: [
+        { scale: 1 - depth * UNDERCARD_SCALE_STEP },
+        { translateY: depth * UNDERCARD_TRANSLATE_STEP },
+      ],
+    };
+  });
 
   return (
     <Animated.View style={[styles.stackedCard, style]} pointerEvents="none">
-      <Image source={{ uri: profile.photos[0] }} style={styles.stackedPhoto} contentFit="cover" />
+      <SwipeCard profile={profile} />
     </Animated.View>
   );
 }
@@ -353,9 +350,6 @@ const styles = StyleSheet.create((theme) => ({
     borderColor: theme.colors.borderSubtle,
     overflow: "hidden",
     ...theme.shadows.level1,
-  },
-  stackedPhoto: {
-    flex: 1,
   },
   badge: (kind: "like" | "skip" | "ask", position: "left" | "right" | "bottom") => ({
     position: "absolute",

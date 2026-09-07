@@ -14,11 +14,8 @@ import {
 } from "@/src/features/discover/model/deck";
 import { DeckFpsOverlay, logSwipeCost, recordDiscoverRender } from "@/src/features/discover/performance";
 import { useDevPanelControls } from "@/src/mocks/devPanelControls";
-import { SEED_PROFILES } from "@/src/mocks/seed/profiles";
 import { StyleSheet, useTheme } from "@/src/theme";
 import type { Profile } from "@/src/types/profile";
-
-const PROMOTE_SCALE = 1 - DECK_VISIBLE_SLOTS * 0.05;
 
 export default function DiscoverScreen() {
   const { deck, profilesById, handleSwiped, handleUndo, handleReset } = useDiscoverDeck();
@@ -64,23 +61,17 @@ export default function DiscoverScreen() {
     }
   }, [pendingUndoEntry]);
 
-  const hasAdvanced = SEED_PROFILES.length - deck.remaining.length > 0;
-
   const slots = useMemo<DeckSlot[]>(() => {
     const out: DeckSlot[] = deck.remaining
       .slice(0, DECK_VISIBLE_SLOTS)
       .map((profileId, depth) => ({ profileId, depth }));
     const front = out[0];
-    if (front) {
-      if (pendingUndoEntry) {
-        front.entry = pendingUndoEntry;
-      } else if (hasAdvanced) {
-        // Promotion from the stack: pop from under-card scale up to full.
-        front.entry = { scale: PROMOTE_SCALE };
-      }
+    if (front && pendingUndoEntry) {
+      // Undo: the restored card springs back in from where it was dismissed.
+      front.entry = pendingUndoEntry;
     }
     return out;
-  }, [deck.remaining, pendingUndoEntry, hasAdvanced]);
+  }, [deck.remaining, pendingUndoEntry]);
 
   const onDeckLayout = useCallback((event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
