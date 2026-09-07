@@ -168,6 +168,43 @@ export async function getCatalogProfileById(id: string): Promise<CatalogBrowseIt
   };
 }
 
+/** A catalog profile with its full, position-ordered photo gallery. */
+export type CatalogProfileDetail = CatalogBrowseItem & {
+  photos: string[];
+};
+
+/**
+ * Full profile for the profile screen (REQUIREMENTS §3.5): every photo and
+ * interest ordered by their seed position so the gallery and chips render in a
+ * stable order. The position-0 photo is denormalized into `photoUri` to keep
+ * the shape compatible with `CatalogBrowseItem`.
+ */
+export async function getCatalogProfileDetail(
+  id: string
+): Promise<CatalogProfileDetail | undefined> {
+  const base = await getCatalogProfileById(id);
+  if (!base) {
+    return undefined;
+  }
+  const [photos, interests] = await Promise.all([
+    db
+      .select({ uri: catalogProfilePhotos.uri })
+      .from(catalogProfilePhotos)
+      .where(eq(catalogProfilePhotos.profileId, id))
+      .orderBy(asc(catalogProfilePhotos.position)),
+    db
+      .select({ tag: catalogProfileInterests.tag })
+      .from(catalogProfileInterests)
+      .where(eq(catalogProfileInterests.profileId, id))
+      .orderBy(asc(catalogProfileInterests.position)),
+  ]);
+  return {
+    ...base,
+    photos: photos.map((photo) => photo.uri),
+    interests: interests.map((entry) => entry.tag),
+  };
+}
+
 /**
  * Idempotent one-time seed: if the catalog table is empty, load all 60 seeded
  * profiles (+ normalized interests/photos) inside a single transaction. Safe to

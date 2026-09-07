@@ -143,6 +143,22 @@ export function deleteAllMatches(): Promise<unknown> {
   return db.delete(matches);
 }
 
+/**
+ * The match thread (if any) for a single catalog profile — lets the profile
+ * screen render a "Message" CTA when this person already matched (REQUIREMENTS
+ * §3.5). `profile_id` is indexed, and a profile can carry at most one match.
+ */
+export async function getMatchByProfileId(
+  profileId: string
+): Promise<MatchRow | undefined> {
+  const [row] = await db
+    .select()
+    .from(matches)
+    .where(eq(matches.profileId, profileId))
+    .limit(1);
+  return row;
+}
+
 /** Whether a match row already exists (so realtime reconcile can dedupe). */
 export async function matchExists(id: string): Promise<boolean> {
   const [row] = await db.select({ id: matches.id }).from(matches).where(eq(matches.id, id)).limit(1);

@@ -84,6 +84,8 @@ export const dark = {
     scrim: 'rgba(0, 0, 0, 0.6)',
     header: '#1C1E21',
     divider: '#2A2D31',
+    imageScrim: 'rgba(0, 0, 0, 0.6)',
+    imageScrimDotInactive: 'rgba(255, 255, 255, 0.4)',
   },
   typography,
   spacing,

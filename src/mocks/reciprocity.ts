@@ -1,4 +1,4 @@
-import { emit } from "@/src/realtime/realtimeChannel";
+import { emit } from "@/src/realtime/publishes";
 import { SEED_PROFILES } from "@/src/mocks/seed/profiles";
 
 /**

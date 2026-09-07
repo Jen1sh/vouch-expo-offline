@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, type LayoutChangeEvent } from "react-native";
+import { router } from "expo-router";
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import Text from "@/components/Text";
@@ -84,6 +85,10 @@ export default function DiscoverScreen() {
     deckRef.current?.swipe(direction);
   }, []);
 
+  const onOpenProfile = useCallback((profile: Profile) => {
+    router.push({ pathname: "/profile/[userId]", params: { userId: profile.id } });
+  }, []);
+
   const deckDone = deck.remaining.length === 0;
 
   return (
@@ -112,6 +117,7 @@ export default function DiscoverScreen() {
               profilesById={profilesById}
               slots={slots}
               onSwiped={onSwiped}
+              onPressCard={onOpenProfile}
             />
           </View>
 

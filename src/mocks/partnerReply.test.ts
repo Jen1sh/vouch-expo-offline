@@ -16,7 +16,7 @@ type Listener = (event: Record<string, unknown>) => void;
 const emitted: Record<string, unknown>[] = [];
 let mockListener: Listener | null = null;
 
-jest.mock("@/src/realtime/realtimeChannel", () => ({
+jest.mock("@/src/realtime/publishes", () => ({
   emit: (event: Record<string, unknown>) => {
     emitted.push(event);
     mockListener?.(event);

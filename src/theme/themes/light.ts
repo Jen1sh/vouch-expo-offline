@@ -84,6 +84,8 @@ export const light = {
     scrim: 'rgba(15, 23, 42, 0.4)',
     header: '#0F172A',
     divider: '#E7E5E4',
+    imageScrim: 'rgba(15, 23, 42, 0.45)',
+    imageScrimDotInactive: 'rgba(255, 255, 255, 0.55)',
   },
   typography,
   spacing,

@@ -1,5 +1,5 @@
 import { getControlsSnapshot } from "./devPanelControls";
-import { emit } from "@/src/realtime/realtimeChannel";
+import { emit } from "@/src/realtime/publishes";
 
 /**
  * Simulated partner reply engine (REQUIREMENTS §3.6/§4.3). When the Dev-Panel

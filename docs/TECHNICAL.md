@@ -338,6 +338,29 @@ paging), `match-seed-saturday` (6 messages, 2 unread), `match-seed-book`
 (4 messages, read). Partners are `SEED_PROFILES[0..2]`, all rows `status =
 'sent'`, no outbox linkage.
 
+## Profile screen (§3.5)
+
+- **Route** `app/(protected)/(member)/profile/[userId].tsx` is a thin container;
+  `src/features/profile/components/ProfileScreen.tsx` owns the screen. Reachable
+  from Browse (tappable rows), Discover (tap a card — `CardDeck.onPressCard`,
+  a Reanimated `Gesture.Exclusive(press, pan)` so the tap doesn't fight the
+  swipe), and the chat thread's tappable partner header.
+- **Data** `useProfile(profileId)` loads `getCatalogProfileDetail` (photos are
+  re-ordered by their catalog `position` field, interests included) and
+  `getMatchByProfileId`; the matched thread id drives the Message CTA. The
+  decision mirror re-hydrates from `listAllSwipes` on focus so choices made on
+  Browse/Discover show up here.
+- **Layout** paging `FlatList` gallery (dot indicator scrim, `Image.prefetch`
+  for the next photo), an editorial header that collapses/translates on scroll
+  via Reanimated shared values only (no React state per frame, §4.6), bio +
+  verified pill + interest chips, and the Discover-style circular Skip /
+  Ask-your-voucher / Like bar (same toggle semantics through the single outbox
+  write path). A matched profile swaps in a primary Message CTA →
+  `/chat/[matchId]`.
+- **Non-goal** there is no vouch-count block on the profile: the current seed
+  has no voucher data for the member's catalog, so the section is omitted rather
+  than faked.
+
 ## Test suite (jest-expo)
 
 - `src/features/discover/model/deck.test.ts` — deck state machine, threshold
@@ -365,6 +388,11 @@ paging), `match-seed-saturday` (6 messages, 2 unread), `match-seed-book`
   `mocks/reciprocity.test.ts` (determinism) and `mocks/partnerReply.test.ts`
   (auto-reply gate), plus component tests for `MatchRow`, `MessageBubble` (4
   transport states), and `MessageComposer`.
+- Profile (§3.5): `features/profile/hooks/useProfile.test.ts` (loading→ready,
+  matched vs unmatched, decision-mirror hydration), `ProfileGallery.test.tsx`
+  (photo order, dot count/advance) and `ProfileScreen.test.tsx` (like
+  toggle → outbox enqueue/undo, Ask-your-voucher, matched → Message CTA
+  routing).
 
 Run with `npm test`. (Integration tests for the drain's ordering while a chat
 thread is live and the `=FailedOutboxItems` stream are deferred — the drain is

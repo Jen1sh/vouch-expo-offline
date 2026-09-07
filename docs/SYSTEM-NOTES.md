@@ -201,8 +201,12 @@ Two persistence layers with different jobs:
   `writeFailureRate` 0.2, `duplicateRate` 0.05, `outOfOrderWindow` 2, offline
   off). `server.ts` is the single "request" entry the future outbox drain calls:
   throws `NetworkOfflineError` / `WriteFailureError` per the knobs, else resolves
-  after random latency. `realtimeChannel.ts` emits the `RealtimeEvent`
-  discriminated union, honoring the duplicate rate + out-of-order window;
+  after random latency. `src/realtime/publishes.ts` owns the `RealtimeEvent`
+  discriminated union + the `emit`/`subscribeToRealtime` surface (honoring the
+  duplicate rate + out-of-order window); `realtimeChannel.ts` re-exports it and
+  adds the Dev-Panel helpers. The mock engines (`partnerReply.ts`,
+  `reciprocity.ts`) emit through `publishes` only, so the module graph stays
+  acyclic (no realtimeChannel ⇄ mocks require cycle);
   `src/realtime/dedupe.ts` is the consumer-side seen-id reducer. The Dev Panel's
   "Force a match / duplicate" buttons drive both, and the event feed line shows
   received vs applied (the visible proof dedupe works).
@@ -228,7 +232,11 @@ Two persistence layers with different jobs:
   `xmark`, `arrow.up`, `arrow.uturn.backward`, `verified-user` in
   `components/ui/icon-symbol.tsx`). RTL mirrors horizontal swipe semantics via
   `I18nManager.isRTL` in both `model/deck.ts` and the render exit.
-  `git grep DECK_VISIBLE_SLOTS` → 3 under-cards.
+  `git grep DECK_VISIBLE_SLOTS` → 3 under-cards. A plain tap on the front card
+  opens the profile (`Gesture.Exclusive(press, pan)`); the tap worklet reads the
+  one-shot swipe lock from a **shared value** (never a ref, and the press
+  callback is read on the JS thread via `runOnJS`) so no `.current` object is
+  ever captured-and-mutated by a worklet.
 - **Catalog (§4.4):** `src/mocks/seed/profiles.ts` deterministically seeds 60
   profiles with ≥3 photos each (asserted in `profiles.test.ts`). It is seed, not
   DB; `useDiscoverDeck` builds `profilesById` from it and prefetches the next 4
@@ -286,3 +294,27 @@ Two persistence layers with different jobs:
   recycled-cell ghost images; the footer is a stable `minHeight: 64` shell
   (spinner / "end" / retry swap changes content without changing outer height).
   `estimatedItemSize` is not set — FlashList v2 dropped the prop.
+
+## Profile screen (member) — gallery, scroll-reactive header, action bar
+
+- **Route:** `app/(protected)/(member)/profile/[userId].tsx` (pushed, hides the
+  tab bar). Thin container rendering `src/features/profile/components/ProfileScreen.tsx`.
+- **Entry points:** Browse rows (→ profile id), Discover cards
+  (`CardDeck.onPressCard`, tap is an exclusive gesture layered with the pan so a
+  tap-to-open doesn't fight swipe-to-dismiss), and the chat thread's tappable
+  partner header — each pushes the same typed route.
+- **Data:** `useProfile` (in `src/features/profile/hooks/`) loads
+  `getCatalogProfileDetail` (photos ordered by catalog `position`, interests,
+  bio) plus `getMatchByProfileId` for the matched-thread id. It re-hydrates its
+  decision mirror from `listAllSwipes` on focus, so a like made in Browse or
+  Discover is already pressed when the profile opens.
+- **Layout (§3.5):** paging `FlatList` gallery with a scrimmed dot indicator
+  and next-photo prefetch; an editorial header (Newsreader name/age + verified
+  seal) that collapses against the top on scroll using Reanimated shared values
+  only (no per-frame React state, §4.6); italic bio + verified pill + interest
+  chips; and the Discover-style circular Skip / Ask-your-voucher / Like bar. The
+  bar reuses the exact outbox toggle semantics (re-press retracts, or
+  enqueues), and a matched profile shows a primary **Message** CTA →
+  `/chat/[matchId]`.
+- **Non-goal:** no vouch-count block on the profile — the seed has no voucher
+  rows for the member's catalog, so the section is omitted rather than faked.

@@ -1,5 +1,6 @@
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useImperativeHandle, useMemo, useRef } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { runOnJS } from "react-native-reanimated";
 import { I18nManager, type LayoutChangeEvent } from "react-native";
 import { scheduleOnRN } from "react-native-worklets";
 import Animated, {
@@ -51,6 +52,8 @@ type Props = {
   profilesById: ReadonlyMap<string, Profile>;
   slots: readonly DeckSlot[];
   onSwiped: (direction: SwipeDirection, profile: Profile) => void;
+  /** Called when the front card is tapped without dragging (opens the profile). */
+  onPressCard?: (profile: Profile) => void;
 };
 
 /**
@@ -58,7 +61,7 @@ type Props = {
  * springs only — no swipe library, no per-frame React state (all motion runs
  * on the UI thread through worklets).
  */
-const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesById, slots, onSwiped }, ref) {
+const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesById, slots, onSwiped, onPressCard }, ref) {
 
   const rtl = I18nManager.isRTL;
 
@@ -86,9 +89,17 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
   // and the one-shot undo entry.
   const onSwipedRef = useRef(onSwiped);
   onSwipedRef.current = onSwiped;
+  const onPressCardRef = useRef(onPressCard);
+  onPressCardRef.current = onPressCard;
   const entryRef = useRef(slots[0]?.entry);
   entryRef.current = slots[0]?.entry;
-  const swipeInProgress = useRef(false);
+
+  // The one-shot swipe lock is a shared value (not a ref): the tap gesture
+  // worklet reads it, and JS writes it — a plain ref captured by a worklet
+  // would warn ("Tried to modify key `current` …"). Every write happens on the
+  // JS thread (imperative `swipe`, or `releaseSwipeLock` scheduled back), so a
+  // shared value stays perfectly in sync with no staleness.
+  const swipeInProgress = useSharedValue(false);
 
   // Stable callbacks scheduled back onto the RN thread via `scheduleOnRN` — no
   // ref hop, no deprecated `runOnJS` re-export.
@@ -97,7 +108,13 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
   }, []);
 
   const releaseSwipeLock = useCallback(() => {
-    swipeInProgress.current = false;
+    swipeInProgress.value = false;
+  }, [swipeInProgress]);
+
+  // Reads the latest press callback on the JS thread (the worklet only carries
+  // the stable function reference — the ref itself is never captured).
+  const pressProfile = useCallback((profile: Profile) => {
+    onPressCardRef.current?.(profile);
   }, []);
 
   /** One worklet for every dismissal — gestures and buttons share it. */
@@ -149,19 +166,36 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
     [rtl, tx, ty, scale, handleDismiss, topSV]
   );
 
+  const pressCard = useMemo(
+    () =>
+      Gesture.Tap().onEnd(() => {
+        'worklet';
+        if (swipeInProgress.value) {
+          return;
+        }
+        const profile = topSV.value;
+        if (profile) {
+          runOnJS(pressProfile)(profile);
+        }
+      }),
+    [topSV, swipeInProgress, pressProfile]
+  );
+
+  const frontGesture = useMemo(() => Gesture.Exclusive(pressCard, pan), [pan, pressCard]);
+
   useImperativeHandle(
     ref,
     () => ({
       swipe(direction) {
         const profile = topSV.value;
-        if (!profile || swipeInProgress.current) {
+        if (!profile || swipeInProgress.value) {
           return;
         }
-        swipeInProgress.current = true;
+        swipeInProgress.value = true;
         handleDismiss(direction, profile);
       },
     }),
-    [handleDismiss, topSV]
+    [handleDismiss, topSV, swipeInProgress]
   );
 
   const rotation = useDerivedValue(() => {
@@ -263,7 +297,7 @@ const CardDeck = forwardRef<CardDeckHandle, Props>(function CardDeck({ profilesB
       })}
 
       {stack.topSlot && top ? (
-        <GestureDetector gesture={pan}>
+        <GestureDetector gesture={frontGesture}>
           <Animated.View key={top.id} style={[styles.topCard, topStyle]}>
             <DragBadge kind="like" progress={likeProgress} />
             <DragBadge kind="skip" progress={skipProgress} />

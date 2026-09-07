@@ -9,7 +9,7 @@ import {
 } from "@/src/mocks/reciprocity";
 import { SEED_PROFILES } from "@/src/mocks/seed/profiles";
 
-jest.mock("@/src/realtime/realtimeChannel", () => ({
+jest.mock("@/src/realtime/publishes", () => ({
   emit: jest.fn(),
 }));
 

@@ -1,93 +1,25 @@
 import { db } from "@/src/db/client";
 import { getMatch } from "@/src/db/queries/matches.queries";
-import { getControlsSnapshot } from "../mocks/devPanelControls";
 import { nextIncomingLine } from "../mocks/partnerReply";
 import { matchIdForProfile, reciprocates } from "../mocks/reciprocity";
 import { SEED_PROFILES } from "../mocks/seed/profiles";
+import {
+  emit,
+  forceDuplicateEvent,
+  getLastEmittedEvent,
+  nextId,
+  subscribeToRealtime,
+} from "./publishes";
 
 /**
- * Simulated realtime events (REQUIREMENTS §4.3). The channel deliberately
- * reflects the Dev-Panel duplicate rate and out-of-order window: an emitted
- * event may be delivered twice or held back behind others. Consumers dedupe
- * by `id` and reconcile against optimistic local state (see `dedupe.ts`).
+ * Simulated realtime events (REQUIREMENTS §4.3). The publish/dispatch surface
+ * and the event types live in `./publishes` (leaf module) so the mock engines
+ * can emit without importing this module — which itself depends on them for its
+ * Dev-Panel helpers. Everything from `publishes` is re-exported here unchanged
+ * for back-compat.
  */
 
-export type RealtimeEvent =
-  | { type: "matches:new"; id: string; matchId: string; profileId: string; occurredAt: number }
-  | { type: "messages:new"; id: string; matchId: string; messageId: string; senderId?: string; body: string; occurredAt: number }
-  | { type: "typing"; id: string; matchId: string; userId: string; occurredAt: number }
-  | { type: "profiles:updated"; id: string; userId: string; occurredAt: number };
-
-export type RealtimeListener = (event: RealtimeEvent) => void;
-
-const listeners = new Set<RealtimeListener>();
-let sequence = 0;
-
-function nextId(prefix: string): string {
-  sequence += 1;
-  return `${prefix}-${sequence}-${Date.now()}`;
-}
-
-let lastEmittedEvent: RealtimeEvent | null = null;
-
-function dispatch(event: RealtimeEvent): void {
-  lastEmittedEvent = event;
-  for (const listener of listeners) {
-    listener(event);
-  }
-}
-
-/**
- * Delivers an event, applying the configured duplicate rate and a small
- * out-of-order window: the event is scheduled with a random hold (0..window)
- * and, on a duplicate roll, fired again after the first delivery.
- */
-function deliver(event: RealtimeEvent): void {
-  const controls = getControlsSnapshot();
-  const holdMs = Math.round(Math.random() * controls.outOfOrderWindow * 50);
-
-  setTimeout(() => {
-    dispatch(event);
-    if (Math.random() < controls.duplicateRate) {
-      setTimeout(() => dispatch(event), holdMs);
-    }
-  }, holdMs);
-}
-
-type RealtimeEventInput =
-  | { type: "matches:new"; matchId: string; profileId: string }
-  | { type: "messages:new"; matchId: string; messageId: string; senderId?: string; body: string }
-  | { type: "typing"; matchId: string; userId: string }
-  | { type: "profiles:updated"; userId: string };
-
-function toEvent(input: RealtimeEventInput): RealtimeEvent {
-  const base = { id: nextId(input.type), occurredAt: Date.now() };
-  switch (input.type) {
-    case "matches:new":
-      return { ...base, type: input.type, matchId: input.matchId, profileId: input.profileId };
-    case "messages:new": {
-      const event = { ...base, type: input.type as "messages:new", matchId: input.matchId, messageId: input.messageId, body: input.body };
-      return input.senderId ? { ...event, senderId: input.senderId } : event;
-    }
-    case "typing":
-      return { ...base, type: input.type, matchId: input.matchId, userId: input.userId };
-    case "profiles:updated":
-      return { ...base, type: input.type, userId: input.userId };
-  }
-  throw new Error(`Unreachable event type: ${String(input)}`);
-}
-
-/** Sends an event as if it arrived from the "network". */
-export function emit(input: RealtimeEventInput): void {
-  deliver(toEvent(input));
-}
-
-export function subscribeToRealtime(listener: RealtimeListener): () => void {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
-}
-
-const forceMatchCursor = { value: 0 };
+export type { RealtimeEvent, RealtimeListener } from "./publishes";
 
 /**
  * Dev Panel: push a fresh `new match` event for an unused seed profile.
@@ -104,6 +36,8 @@ export function forceMatchEvent(): void {
     profileId: probe.id,
   });
 }
+
+const forceMatchCursor = { value: 0 };
 
 /**
  * Dev Panel: push one genuine incoming message for a match. Resolves the
@@ -134,17 +68,6 @@ export async function simulateTyping(matchId: string): Promise<void> {
   emit({ type: "typing", matchId, userId: match.profileId });
 }
 
-/** Dev Panel: push a duplicate of the most recent emitted event. */
-export function forceDuplicateEvent(): void {
-  if (lastEmittedEvent) {
-    dispatch({ ...lastEmittedEvent });
-  }
-}
-
-export function getLastEmittedEvent(): RealtimeEvent | null {
-  return lastEmittedEvent;
-}
-
 /** Used by tests + Dev Panel to prove reciprocity produces match events. */
 export function simulateReciprocalLike(profileId: string): boolean {
   if (!reciprocates(profileId)) {
@@ -153,3 +76,10 @@ export function simulateReciprocalLike(profileId: string): boolean {
   emit({ type: "matches:new", matchId: matchIdForProfile(profileId), profileId });
   return true;
 }
+
+export {
+  emit,
+  forceDuplicateEvent,
+  getLastEmittedEvent,
+  subscribeToRealtime,
+};

@@ -1,15 +1,11 @@
 import { useLocalSearchParams } from 'expo-router';
 
-import PlaceholderScreen from '@/components/placeholder-screen';
+import { ProfileScreen } from '@/src/features/profile';
 
 export default function ProfileRoute() {
   const { userId } = useLocalSearchParams<{ userId: string }>();
 
-  return (
-    <PlaceholderScreen
-      icon="person.fill"
-      title="Profile"
-      caption={`${userId}'s gallery and details appear here.`}
-    />
-  );
+  // Thin route container (SKILLS "Add a new screen/route"): it only extracts
+  // the id and delegates rendering to the ProfileScreen presentational feature.
+  return <ProfileScreen profileId={userId} />;
 }
