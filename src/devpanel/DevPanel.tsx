@@ -139,7 +139,7 @@ export default function DevPanel() {
         <Section title="Verification code">
           <View style={styles.codeRow}>
             <View style={styles.codeChip}>
-              <Text variant="titleLg" color="secondary" style={styles.codeText}>
+              <Text variant="titleLg" color="textPrimary" style={styles.codeText}>
                 {code ?? '------'}
               </Text>
             </View>
@@ -499,12 +499,11 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.spacing.sm,
   },
   sectionBody: {
-    backgroundColor: theme.colors.surfaceElevated,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.borderSubtle,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.md,
     padding: theme.spacing.md,
-    ...theme.shadows.level1,
     gap: theme.spacing.md,
   },
   codeRow: {
@@ -514,7 +513,9 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.spacing.sm,
   },
   codeChip: {
-    backgroundColor: theme.colors.devPanelPill,
+    backgroundColor: theme.colors.surfaceSubdued,
+    borderWidth: 1,
+    borderColor: theme.colors.borderSubtle,
     borderRadius: theme.radius.md,
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md,

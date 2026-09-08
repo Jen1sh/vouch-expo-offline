@@ -109,7 +109,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <Text variant="headlineLgMobile" color="textPrimary">
           {t('settings.title')}
@@ -124,7 +124,7 @@ export default function SettingsScreen() {
       </View>
 
       <Section title={t('settings.modeSection')}>
-        <View variant="surfaceElevated" style={[styles.card, styles.modeCard]}>
+        <View variant="surface" style={[styles.card, styles.modeCard]}>
           <Text variant="bodySm" color="textSecondary" style={styles.modeIntro}>
             {t('settings.modeIntro')}
           </Text>
@@ -240,7 +240,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       <Text variant="labelCaps" color="textMuted">
         {title}
       </Text>
-      <View variant="surfaceElevated" style={styles.card}>
+      <View variant="surface" style={styles.card}>
         {children}
       </View>
     </View>
@@ -283,7 +283,11 @@ function ChoiceChips<V extends string>({
 }
 
 const styles = StyleSheet.create((theme) => ({
-content: {
+  screen: {
+    flex: 1,
+    backgroundColor: theme.colors.surface,
+  },
+  content: {
     paddingHorizontal: theme.spacing.gutterMobile,
     paddingBottom: theme.spacing['2xl'],
   },
@@ -305,12 +309,11 @@ content: {
     gap: theme.spacing.xs,
   },
   card: {
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.md,
     borderWidth: 1,
     borderColor: theme.colors.borderSubtle,
     padding: theme.spacing.md,
     gap: theme.spacing.sm,
-    ...theme.shadows.level1,
   },
   modeCard: {
     gap: theme.spacing.sm,

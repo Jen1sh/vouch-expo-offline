@@ -95,12 +95,11 @@ export default ShortlistRow;
 
 const styles = StyleSheet.create((theme) => ({
   card: {
-    backgroundColor: theme.colors.surfaceElevated,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.borderSubtle,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.md,
     padding: theme.spacing.sm,
-    ...theme.shadows.level1,
   },
   header: (pressed: boolean) => ({
     flexDirection: "row",
