@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { View } from "react-native";
 
 import Text from "@/components/Text";
 
@@ -41,7 +42,8 @@ export function logBrowseLikeToggle(profileId: string): void {
 
 /**
  * Tiny per-row counter (dev builds only) that visualizes the isolation claim:
- * after any like toggle only the affected row's `×N` advances.
+ * after any like toggle only the affected row's `×N` advances. Absolutely
+ * positioned at the row's top-left so it's clearly readable.
  */
 export function BrowseRowRenderBadge({ profileId }: { profileId: string }) {
   const render = useRef(0);
@@ -57,6 +59,19 @@ export function BrowseRowRenderBadge({ profileId }: { profileId: string }) {
     return null;
   }
   return (
-    <Text variant="labelCaps" color="textMuted">{`\u00d7${render.current}`}</Text>
+    <View style={badgeWrap} pointerEvents="none">
+      <Text variant="labelCaps" color="critical">{`re-render \u00d7${render.current}`}</Text>
+    </View>
   );
 }
+
+const badgeWrap = {
+  position: "absolute" as const,
+  top: 0,
+  left: 0,
+  backgroundColor: "rgba(0,0,0,0.55)",
+  borderRadius: 6,
+  paddingHorizontal: 6,
+  paddingVertical: 2,
+  zIndex: 10,
+};

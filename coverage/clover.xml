@@ -1,0 +1,1586 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1788865436021" clover="3.2.0">
+  <project timestamp="1788865436021" name="All files">
+    <metrics statements="1268" coveredstatements="1115" conditionals="727" coveredconditionals="559" methods="442" coveredmethods="372" elements="2437" coveredelements="2046" complexity="0" loc="1268" ncloc="1268" packages="34" files="70" classes="70"/>
+    <package name="components">
+      <metrics statements="22" coveredstatements="21" conditionals="20" coveredconditionals="18" methods="12" coveredmethods="12"/>
+      <file name="Button.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/components/Button.tsx">
+        <metrics statements="11" coveredstatements="11" conditionals="13" coveredconditionals="12" methods="5" coveredmethods="5"/>
+        <line num="32" count="35" type="stmt"/>
+        <line num="36" count="35" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="48" count="3" type="stmt"/>
+        <line num="53" count="3" type="stmt"/>
+        <line num="58" count="3" type="stmt"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="69" count="3" type="stmt"/>
+        <line num="77" count="35" type="stmt"/>
+        <line num="78" count="35" type="stmt"/>
+        <line num="98" count="34" type="stmt"/>
+      </file>
+      <file name="Text.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/components/Text.tsx">
+        <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
+        <line num="22" count="549" type="stmt"/>
+        <line num="25" count="10" type="stmt"/>
+        <line num="26" count="549" type="stmt"/>
+      </file>
+      <file name="View.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/components/View.tsx">
+        <metrics statements="8" coveredstatements="7" conditionals="5" coveredconditionals="4" methods="4" coveredmethods="4"/>
+        <line num="18" count="435" type="stmt"/>
+        <line num="21" count="11" type="stmt"/>
+        <line num="22" count="435" type="stmt"/>
+        <line num="29" count="435" type="cond" truecount="3" falsecount="1"/>
+        <line num="31" count="28" type="stmt"/>
+        <line num="33" count="14" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="37" count="393" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.ui">
+      <metrics statements="1" coveredstatements="1" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
+      <file name="icon-symbol.ios.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/components/ui/icon-symbol.ios.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="17" count="46" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.db.queries">
+      <metrics statements="47" coveredstatements="2" conditionals="33" coveredconditionals="0" methods="24" coveredmethods="0"/>
+      <file name="matches.queries.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/db/queries/matches.queries.ts">
+        <metrics statements="30" coveredstatements="0" conditionals="23" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="73" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="101" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="112" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="114" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="115" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="119" count="0" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="164" count="0" type="stmt"/>
+        <line num="165" count="0" type="stmt"/>
+      </file>
+      <file name="settings.queries.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/db/queries/settings.queries.ts">
+        <metrics statements="17" coveredstatements="2" conditionals="10" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.db.schema">
+      <metrics statements="18" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="9" coveredmethods="0"/>
+      <file name="catalog.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/db/schema/catalog.ts">
+        <metrics statements="8" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+      </file>
+      <file name="matches.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/db/schema/matches.ts">
+        <metrics statements="3" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+      </file>
+      <file name="messages.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/db/schema/messages.ts">
+        <metrics statements="4" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+      </file>
+      <file name="settings.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/db/schema/settings.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.auth.components">
+      <metrics statements="38" coveredstatements="34" conditionals="18" coveredconditionals="14" methods="12" coveredmethods="10"/>
+      <file name="VerifyCodeScreen.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/auth/components/VerifyCodeScreen.tsx">
+        <metrics statements="38" coveredstatements="34" conditionals="18" coveredconditionals="14" methods="12" coveredmethods="10"/>
+        <line num="26" count="14" type="stmt"/>
+        <line num="27" count="14" type="stmt"/>
+        <line num="28" count="14" type="stmt"/>
+        <line num="30" count="14" type="stmt"/>
+        <line num="31" count="14" type="stmt"/>
+        <line num="32" count="14" type="stmt"/>
+        <line num="33" count="14" type="stmt"/>
+        <line num="34" count="14" type="stmt"/>
+        <line num="36" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="14" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="58" count="14" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="64" count="14" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="86" count="14" type="stmt"/>
+        <line num="99" count="4" type="stmt"/>
+        <line num="100" count="4" type="stmt"/>
+        <line num="101" count="4" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="155" count="1" type="stmt"/>
+        <line num="156" count="1" type="stmt"/>
+        <line num="159" count="1" type="stmt"/>
+        <line num="174" count="14" type="stmt"/>
+        <line num="185" count="14" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.browse">
+      <metrics statements="20" coveredstatements="15" conditionals="6" coveredconditionals="3" methods="9" coveredmethods="7"/>
+      <file name="performance.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/browse/performance.tsx">
+        <metrics statements="20" coveredstatements="15" conditionals="6" coveredconditionals="3" methods="9" coveredmethods="7"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="27" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="49" count="5" type="stmt"/>
+        <line num="50" count="5" type="stmt"/>
+        <line num="52" count="5" type="stmt"/>
+        <line num="53" count="4" type="stmt"/>
+        <line num="54" count="4" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="58" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="61" count="5" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.browse.components">
+      <metrics statements="60" coveredstatements="56" conditionals="58" coveredconditionals="49" methods="36" coveredmethods="32"/>
+      <file name="BrowseFilterBar.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/browse/components/BrowseFilterBar.tsx">
+        <metrics statements="25" coveredstatements="23" conditionals="20" coveredconditionals="18" methods="11" coveredmethods="9"/>
+        <line num="33" count="9" type="stmt"/>
+        <line num="34" count="9" type="stmt"/>
+        <line num="35" count="9" type="stmt"/>
+        <line num="37" count="9" type="stmt"/>
+        <line num="38" count="3" type="stmt"/>
+        <line num="40" count="9" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="44" count="9" type="stmt"/>
+        <line num="45" count="9" type="stmt"/>
+        <line num="47" count="9" type="stmt"/>
+        <line num="54" count="9" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="100" count="9" type="stmt"/>
+        <line num="114" count="9" type="stmt"/>
+        <line num="115" count="9" type="cond" truecount="4" falsecount="0"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="118" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="119" count="1" type="stmt"/>
+        <line num="121" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="122" count="1" type="stmt"/>
+        <line num="124" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="127" count="1" type="stmt"/>
+        <line num="131" count="9" type="stmt"/>
+        <line num="170" count="9" type="stmt"/>
+      </file>
+      <file name="BrowseFilterPanel.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/browse/components/BrowseFilterPanel.tsx">
+        <metrics statements="21" coveredstatements="19" conditionals="22" coveredconditionals="19" methods="17" coveredmethods="15"/>
+        <line num="31" count="9" type="stmt"/>
+        <line num="32" count="9" type="stmt"/>
+        <line num="34" count="9" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="57" count="36" type="stmt"/>
+        <line num="58" count="36" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="65" count="36" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="98" count="3" type="stmt"/>
+        <line num="118" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="119" count="18" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="130" count="18" type="stmt"/>
+        <line num="142" count="1" type="stmt"/>
+        <line num="143" count="18" type="stmt"/>
+        <line num="153" count="1" type="stmt"/>
+        <line num="170" count="36" type="stmt"/>
+        <line num="189" count="36" type="stmt"/>
+        <line num="216" count="3" type="stmt"/>
+      </file>
+      <file name="BrowseRow.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/browse/components/BrowseRow.tsx">
+        <metrics statements="14" coveredstatements="14" conditionals="16" coveredconditionals="12" methods="8" coveredmethods="8"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="28" count="5" type="stmt"/>
+        <line num="29" count="5" type="stmt"/>
+        <line num="30" count="5" type="stmt"/>
+        <line num="32" count="5" type="stmt"/>
+        <line num="33" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="41" count="5" type="stmt"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="80" count="5" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="96" count="5" type="stmt"/>
+        <line num="131" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.browse.model">
+      <metrics statements="30" coveredstatements="28" conditionals="32" coveredconditionals="28" methods="14" coveredmethods="12"/>
+      <file name="browseFilters.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/browse/model/browseFilters.ts">
+        <metrics statements="22" coveredstatements="20" conditionals="30" coveredconditionals="26" methods="11" coveredmethods="9"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="39" count="7" type="stmt"/>
+        <line num="44" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="6" type="stmt"/>
+        <line num="51" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="52" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="68" count="4" type="stmt"/>
+        <line num="72" count="2" type="stmt"/>
+        <line num="77" count="20" type="stmt"/>
+        <line num="87" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="90" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="91" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="92" count="2" type="stmt"/>
+        <line num="97" count="3" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="feed.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/browse/model/feed.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="27" count="6" type="stmt"/>
+        <line num="28" count="6" type="stmt"/>
+        <line num="29" count="6" type="stmt"/>
+        <line num="30" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="7" type="stmt"/>
+        <line num="32" count="7" type="stmt"/>
+        <line num="35" count="6" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.browse.store">
+      <metrics statements="42" coveredstatements="40" conditionals="20" coveredconditionals="17" methods="13" coveredmethods="12"/>
+      <file name="user-swipes.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/browse/store/user-swipes.ts">
+        <metrics statements="42" coveredstatements="40" conditionals="20" coveredconditionals="17" methods="13" coveredmethods="12"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="25" count="82" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="21" type="stmt"/>
+        <line num="30" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="17" type="stmt"/>
+        <line num="33" count="4" type="stmt"/>
+        <line num="34" count="4" type="stmt"/>
+        <line num="40" count="13" type="cond" truecount="1" falsecount="1"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="43" count="13" type="stmt"/>
+        <line num="44" count="13" type="stmt"/>
+        <line num="53" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="10" type="stmt"/>
+        <line num="61" count="10" type="stmt"/>
+        <line num="63" count="10" type="stmt"/>
+        <line num="64" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="66" count="2" type="stmt"/>
+        <line num="69" count="10" type="stmt"/>
+        <line num="70" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="71" count="2" type="stmt"/>
+        <line num="72" count="2" type="stmt"/>
+        <line num="76" count="10" type="stmt"/>
+        <line num="77" count="4" type="stmt"/>
+        <line num="82" count="13" type="stmt"/>
+        <line num="83" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="84" count="4" type="stmt"/>
+        <line num="85" count="4" type="stmt"/>
+        <line num="91" count="18" type="stmt"/>
+        <line num="92" count="18" type="cond" truecount="1" falsecount="1"/>
+        <line num="93" count="18" type="stmt"/>
+        <line num="94" count="18" type="stmt"/>
+        <line num="96" count="18" type="stmt"/>
+        <line num="97" count="18" type="stmt"/>
+        <line num="98" count="18" type="stmt"/>
+        <line num="99" count="18" type="cond" truecount="1" falsecount="1"/>
+        <line num="100" count="18" type="stmt"/>
+        <line num="111" count="18" type="stmt"/>
+        <line num="112" count="18" type="stmt"/>
+        <line num="113" count="58" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.chat">
+      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="constants.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/constants.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="2" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.chat.components">
+      <metrics statements="56" coveredstatements="38" conditionals="82" coveredconditionals="51" methods="22" coveredmethods="19"/>
+      <file name="MatchRow.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/components/MatchRow.tsx">
+        <metrics statements="30" coveredstatements="14" conditionals="33" coveredconditionals="17" methods="8" coveredmethods="6"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="4" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="26" count="4" type="cond" truecount="2" falsecount="2"/>
+        <line num="32" count="4" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="4" type="stmt"/>
+        <line num="84" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="2" type="stmt"/>
+        <line num="88" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="93" count="2" type="stmt"/>
+        <line num="97" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="112" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="115" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="119" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="122" count="0" type="stmt"/>
+        <line num="123" count="0" type="stmt"/>
+        <line num="128" count="1" type="stmt"/>
+        <line num="129" count="4" type="stmt"/>
+      </file>
+      <file name="MessageBubble.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/components/MessageBubble.tsx">
+        <metrics statements="14" coveredstatements="13" conditionals="39" coveredconditionals="26" methods="9" coveredmethods="8"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="29" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="4" type="stmt"/>
+        <line num="32" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="4" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="79" count="2" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="2" type="stmt"/>
+        <line num="106" count="1" type="stmt"/>
+        <line num="107" count="4" type="stmt"/>
+        <line num="111" count="4" type="stmt"/>
+        <line num="146" count="4" type="stmt"/>
+      </file>
+      <file name="MessageComposer.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/components/MessageComposer.tsx">
+        <metrics statements="12" coveredstatements="11" conditionals="10" coveredconditionals="8" methods="5" coveredmethods="5"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="24" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="5" type="stmt"/>
+        <line num="27" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="53" count="5" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="91" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.chat.model">
+      <metrics statements="10" coveredstatements="10" conditionals="10" coveredconditionals="8" methods="12" coveredmethods="12"/>
+      <file name="thread.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/model/thread.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="10" coveredconditionals="8" methods="12" coveredmethods="12"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="2" type="cond" truecount="4" falsecount="2"/>
+        <line num="40" count="4" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="55" count="2" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="75" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.chat.realtime">
+      <metrics statements="33" coveredstatements="30" conditionals="18" coveredconditionals="16" methods="5" coveredmethods="5"/>
+      <file name="chatRealtime.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/realtime/chatRealtime.ts">
+        <metrics statements="33" coveredstatements="30" conditionals="18" coveredconditionals="16" methods="5" coveredmethods="5"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="40" count="7" type="stmt"/>
+        <line num="44" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="47" count="7" type="stmt"/>
+        <line num="49" count="7" type="stmt"/>
+        <line num="52" count="7" type="stmt"/>
+        <line num="54" count="7" type="stmt"/>
+        <line num="55" count="7" type="stmt"/>
+        <line num="60" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="63" count="6" type="stmt"/>
+        <line num="65" count="6" type="cond" truecount="3" falsecount="1"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="73" count="1" type="stmt"/>
+        <line num="78" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="82" count="3" type="stmt"/>
+        <line num="83" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="84" count="1" type="stmt"/>
+        <line num="86" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="87" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="90" count="2" type="stmt"/>
+        <line num="91" count="2" type="stmt"/>
+        <line num="101" count="2" type="stmt"/>
+        <line num="102" count="2" type="stmt"/>
+        <line num="103" count="2" type="stmt"/>
+        <line num="106" count="1" type="stmt"/>
+        <line num="107" count="1" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.chat.store">
+      <metrics statements="80" coveredstatements="76" conditionals="26" coveredconditionals="18" methods="29" coveredmethods="27"/>
+      <file name="matches.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/store/matches.ts">
+        <metrics statements="16" coveredstatements="16" conditionals="2" coveredconditionals="2" methods="8" coveredmethods="8"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="32" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="46" count="10" type="stmt"/>
+        <line num="51" count="3" type="stmt"/>
+      </file>
+      <file name="message-status.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/store/message-status.ts">
+        <metrics statements="32" coveredstatements="29" conditionals="12" coveredconditionals="8" methods="11" coveredmethods="10"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="21" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="9" type="stmt"/>
+        <line num="26" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="35" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="5" type="stmt"/>
+        <line num="39" count="5" type="stmt"/>
+        <line num="43" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="51" count="11" type="stmt"/>
+        <line num="52" count="11" type="stmt"/>
+        <line num="53" count="11" type="stmt"/>
+        <line num="54" count="3" type="stmt"/>
+        <line num="59" count="7" type="stmt"/>
+        <line num="60" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="61" count="7" type="stmt"/>
+        <line num="62" count="7" type="stmt"/>
+        <line num="64" count="7" type="stmt"/>
+        <line num="65" count="7" type="stmt"/>
+        <line num="66" count="7" type="stmt"/>
+        <line num="67" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="68" count="7" type="stmt"/>
+        <line num="78" count="7" type="stmt"/>
+        <line num="79" count="7" type="stmt"/>
+        <line num="80" count="22" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+      </file>
+      <file name="typing.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/chat/store/typing.ts">
+        <metrics statements="32" coveredstatements="31" conditionals="12" coveredconditionals="8" methods="10" coveredmethods="9"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="19" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="28" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="33" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="36" count="3" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="48" count="25" type="stmt"/>
+        <line num="52" count="7" type="stmt"/>
+        <line num="53" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="54" count="7" type="stmt"/>
+        <line num="55" count="7" type="stmt"/>
+        <line num="57" count="7" type="stmt"/>
+        <line num="58" count="7" type="stmt"/>
+        <line num="59" count="7" type="stmt"/>
+        <line num="60" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="61" count="7" type="stmt"/>
+        <line num="68" count="7" type="stmt"/>
+        <line num="69" count="7" type="stmt"/>
+        <line num="70" count="25" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.discover.model">
+      <metrics statements="36" coveredstatements="33" conditionals="34" coveredconditionals="31" methods="7" coveredmethods="6"/>
+      <file name="deck.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/discover/model/deck.ts">
+        <metrics statements="36" coveredstatements="33" conditionals="34" coveredconditionals="31" methods="7" coveredmethods="6"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="37" count="10" type="stmt"/>
+        <line num="42" count="13" type="stmt"/>
+        <line num="43" count="13" type="cond" truecount="1" falsecount="1"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="46" count="13" type="stmt"/>
+        <line num="51" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="54" count="4" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="82" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="10" type="stmt"/>
+        <line num="85" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="86" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="88" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="89" count="7" type="cond" truecount="5" falsecount="0"/>
+        <line num="90" count="3" type="stmt"/>
+        <line num="92" count="4" type="cond" truecount="4" falsecount="1"/>
+        <line num="93" count="3" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="98" count="3" type="cond" truecount="4" falsecount="1"/>
+        <line num="99" count="3" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="112" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="113" count="6" type="cond" truecount="3" falsecount="0"/>
+        <line num="115" count="3" type="stmt"/>
+        <line num="117" count="2" type="stmt"/>
+        <line num="119" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.onboarding">
+      <metrics statements="39" coveredstatements="39" conditionals="40" coveredconditionals="35" methods="6" coveredmethods="6"/>
+      <file name="schema.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/onboarding/schema.ts">
+        <metrics statements="39" coveredstatements="39" conditionals="40" coveredconditionals="35" methods="6" coveredmethods="6"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="181" count="1" type="stmt"/>
+        <line num="183" count="1" type="stmt"/>
+        <line num="190" count="1" type="stmt"/>
+        <line num="200" count="1" type="stmt"/>
+        <line num="203" count="77" type="stmt"/>
+        <line num="211" count="5" type="stmt"/>
+        <line num="212" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="213" count="17" type="stmt"/>
+        <line num="215" count="4" type="stmt"/>
+        <line num="220" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="224" count="20" type="cond" truecount="4" falsecount="0"/>
+        <line num="226" count="1" type="stmt"/>
+        <line num="227" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="228" count="1" type="stmt"/>
+        <line num="231" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="232" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="233" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="234" count="1" type="stmt"/>
+        <line num="237" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="244" count="4" type="stmt"/>
+        <line num="247" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="248" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="249" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="250" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="251" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="253" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="254" count="4" type="stmt"/>
+        <line num="255" count="4" type="stmt"/>
+        <line num="258" count="10" type="stmt"/>
+        <line num="259" count="10" type="stmt"/>
+        <line num="260" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="261" count="10" type="stmt"/>
+        <line num="263" count="10" type="stmt"/>
+        <line num="267" count="20" type="stmt"/>
+        <line num="280" count="3" type="stmt"/>
+        <line num="281" count="3" type="stmt"/>
+        <line num="282" count="15" type="stmt"/>
+        <line num="284" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.profile.components">
+      <metrics statements="62" coveredstatements="56" conditionals="53" coveredconditionals="41" methods="31" coveredmethods="28"/>
+      <file name="ProfileActionBar.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/profile/components/ProfileActionBar.tsx">
+        <metrics statements="14" coveredstatements="13" conditionals="23" coveredconditionals="20" methods="10" coveredmethods="9"/>
+        <line num="38" count="5" type="stmt"/>
+        <line num="41" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="5" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="67" count="5" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="83" count="5" type="stmt"/>
+        <line num="98" count="2" type="stmt"/>
+        <line num="100" count="5" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="130" count="15" type="stmt"/>
+        <line num="148" count="15" type="stmt"/>
+      </file>
+      <file name="ProfileBody.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/profile/components/ProfileBody.tsx">
+        <metrics statements="4" coveredstatements="4" conditionals="4" coveredconditionals="2" methods="3" coveredmethods="3"/>
+        <line num="20" count="5" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="40" count="10" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+      </file>
+      <file name="ProfileGallery.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/profile/components/ProfileGallery.tsx">
+        <metrics statements="20" coveredstatements="19" conditionals="12" coveredconditionals="11" methods="10" coveredmethods="9"/>
+        <line num="25" count="9" type="stmt"/>
+        <line num="26" count="9" type="stmt"/>
+        <line num="27" count="9" type="stmt"/>
+        <line num="32" count="9" type="stmt"/>
+        <line num="33" count="8" type="stmt"/>
+        <line num="34" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="4" type="stmt"/>
+        <line num="41" count="9" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="46" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="56" count="9" type="stmt"/>
+        <line num="60" count="24" type="stmt"/>
+        <line num="67" count="17" type="stmt"/>
+        <line num="80" count="12" type="stmt"/>
+        <line num="92" count="2" type="stmt"/>
+        <line num="94" count="2" type="stmt"/>
+        <line num="98" count="17" type="stmt"/>
+        <line num="124" count="12" type="stmt"/>
+      </file>
+      <file name="ProfileHeader.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/profile/components/ProfileHeader.tsx">
+        <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="1" methods="4" coveredmethods="4"/>
+        <line num="42" count="5" type="stmt"/>
+        <line num="44" count="5" type="stmt"/>
+        <line num="49" count="5" type="stmt"/>
+        <line num="54" count="5" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+      </file>
+      <file name="ProfileScreen.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/profile/components/ProfileScreen.tsx">
+        <metrics statements="19" coveredstatements="15" conditionals="12" coveredconditionals="7" methods="4" coveredmethods="3"/>
+        <line num="32" count="5" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="39" count="5" type="stmt"/>
+        <line num="44" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="55" count="5" type="cond" truecount="2" falsecount="2"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="63" count="5" type="cond" truecount="2" falsecount="2"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="81" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="85" count="5" type="stmt"/>
+        <line num="87" count="5" type="stmt"/>
+        <line num="123" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.profile.hooks">
+      <metrics statements="37" coveredstatements="27" conditionals="12" coveredconditionals="5" methods="8" coveredmethods="6"/>
+      <file name="useProfile.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/profile/hooks/useProfile.ts">
+        <metrics statements="37" coveredstatements="27" conditionals="12" coveredconditionals="5" methods="8" coveredmethods="6"/>
+        <line num="35" count="8" type="stmt"/>
+        <line num="36" count="8" type="stmt"/>
+        <line num="37" count="8" type="stmt"/>
+        <line num="38" count="8" type="stmt"/>
+        <line num="40" count="8" type="stmt"/>
+        <line num="41" count="4" type="stmt"/>
+        <line num="42" count="4" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="44" count="4" type="stmt"/>
+        <line num="45" count="4" type="stmt"/>
+        <line num="46" count="4" type="stmt"/>
+        <line num="50" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="53" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="57" count="4" type="stmt"/>
+        <line num="58" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="4" type="stmt"/>
+        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="69" count="8" type="stmt"/>
+        <line num="70" count="4" type="stmt"/>
+        <line num="74" count="8" type="stmt"/>
+        <line num="76" count="8" type="stmt"/>
+        <line num="77" count="8" type="stmt"/>
+        <line num="78" count="8" type="stmt"/>
+        <line num="80" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="81" count="8" type="stmt"/>
+        <line num="85" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="89" count="8" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="95" count="8" type="stmt"/>
+        <line num="97" count="8" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.settings.components">
+      <metrics statements="44" coveredstatements="34" conditionals="24" coveredconditionals="20" methods="23" coveredmethods="20"/>
+      <file name="SettingsScreen.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/settings/components/SettingsScreen.tsx">
+        <metrics statements="44" coveredstatements="34" conditionals="24" coveredconditionals="20" methods="23" coveredmethods="20"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="63" count="7" type="stmt"/>
+        <line num="64" count="7" type="stmt"/>
+        <line num="65" count="7" type="stmt"/>
+        <line num="66" count="7" type="stmt"/>
+        <line num="68" count="7" type="stmt"/>
+        <line num="69" count="7" type="stmt"/>
+        <line num="71" count="7" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="75" count="7" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="79" count="7" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="85" count="7" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="98" count="7" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="111" count="7" type="stmt"/>
+        <line num="133" count="14" type="stmt"/>
+        <line num="134" count="14" type="stmt"/>
+        <line num="140" count="1" type="stmt"/>
+        <line num="141" count="14" type="stmt"/>
+        <line num="212" count="7" type="stmt"/>
+        <line num="238" count="21" type="stmt"/>
+        <line num="263" count="14" type="stmt"/>
+        <line num="266" count="35" type="stmt"/>
+        <line num="267" count="35" type="stmt"/>
+        <line num="273" count="2" type="stmt"/>
+        <line num="274" count="35" type="stmt"/>
+        <line num="285" count="1" type="stmt"/>
+        <line num="327" count="14" type="stmt"/>
+        <line num="351" count="35" type="stmt"/>
+        <line num="373" count="7" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.settings.store">
+      <metrics statements="20" coveredstatements="19" conditionals="10" coveredconditionals="7" methods="8" coveredmethods="8"/>
+      <file name="settings.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/settings/store/settings.ts">
+        <metrics statements="20" coveredstatements="19" conditionals="10" coveredconditionals="7" methods="8" coveredmethods="8"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="28" count="374" type="stmt"/>
+        <line num="32" count="6" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="38" count="21" type="stmt"/>
+        <line num="39" count="21" type="stmt"/>
+        <line num="40" count="21" type="stmt"/>
+        <line num="46" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="53" count="2" type="stmt"/>
+        <line num="54" count="2" type="stmt"/>
+        <line num="58" count="7" type="stmt"/>
+        <line num="59" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="64" count="3" type="stmt"/>
+        <line num="66" count="4" type="stmt"/>
+        <line num="67" count="4" type="stmt"/>
+        <line num="72" count="5" type="stmt"/>
+        <line num="76" count="31" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.voucher.browse">
+      <metrics statements="20" coveredstatements="15" conditionals="6" coveredconditionals="3" methods="9" coveredmethods="7"/>
+      <file name="performance.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/voucher/browse/performance.tsx">
+        <metrics statements="20" coveredstatements="15" conditionals="6" coveredconditionals="3" methods="9" coveredmethods="7"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="27" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="51" count="5" type="stmt"/>
+        <line num="52" count="5" type="stmt"/>
+        <line num="54" count="5" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="56" count="4" type="stmt"/>
+        <line num="57" count="4" type="stmt"/>
+        <line num="60" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="63" count="5" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.voucher.browse.components">
+      <metrics statements="14" coveredstatements="14" conditionals="16" coveredconditionals="12" methods="8" coveredmethods="8"/>
+      <file name="VoucherBrowseRow.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/voucher/browse/components/VoucherBrowseRow.tsx">
+        <metrics statements="14" coveredstatements="14" conditionals="16" coveredconditionals="12" methods="8" coveredmethods="8"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="37" count="5" type="stmt"/>
+        <line num="38" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="5" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="53" count="5" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="90" count="5" type="stmt"/>
+        <line num="105" count="1" type="stmt"/>
+        <line num="106" count="5" type="stmt"/>
+        <line num="141" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.voucher.browse.store">
+      <metrics statements="42" coveredstatements="40" conditionals="18" coveredconditionals="15" methods="13" coveredmethods="12"/>
+      <file name="user-shortlist.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/voucher/browse/store/user-shortlist.ts">
+        <metrics statements="42" coveredstatements="40" conditionals="18" coveredconditionals="15" methods="13" coveredmethods="12"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="22" count="68" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="18" type="stmt"/>
+        <line num="27" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="15" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="37" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="40" count="10" type="stmt"/>
+        <line num="41" count="10" type="stmt"/>
+        <line num="50" count="4" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="61" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="66" count="2" type="stmt"/>
+        <line num="67" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="68" count="2" type="stmt"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="73" count="2" type="stmt"/>
+        <line num="74" count="3" type="stmt"/>
+        <line num="79" count="9" type="stmt"/>
+        <line num="80" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="81" count="5" type="stmt"/>
+        <line num="82" count="5" type="stmt"/>
+        <line num="88" count="10" type="stmt"/>
+        <line num="89" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="90" count="10" type="stmt"/>
+        <line num="91" count="10" type="stmt"/>
+        <line num="93" count="10" type="stmt"/>
+        <line num="94" count="10" type="stmt"/>
+        <line num="95" count="10" type="stmt"/>
+        <line num="96" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="97" count="10" type="stmt"/>
+        <line num="108" count="10" type="stmt"/>
+        <line num="109" count="10" type="stmt"/>
+        <line num="110" count="33" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.features.voucher.shortlist.components">
+      <metrics statements="25" coveredstatements="25" conditionals="8" coveredconditionals="8" methods="8" coveredmethods="8"/>
+      <file name="VouchNoteEditor.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/features/voucher/shortlist/components/VouchNoteEditor.tsx">
+        <metrics statements="25" coveredstatements="25" conditionals="8" coveredconditionals="8" methods="8" coveredmethods="8"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="32" count="8" type="stmt"/>
+        <line num="34" count="8" type="stmt"/>
+        <line num="35" count="8" type="stmt"/>
+        <line num="36" count="8" type="stmt"/>
+        <line num="40" count="8" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
+        <line num="44" count="8" type="stmt"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="46" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="49" count="3" type="stmt"/>
+        <line num="53" count="8" type="stmt"/>
+        <line num="54" count="5" type="stmt"/>
+        <line num="55" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="58" count="5" type="stmt"/>
+        <line num="59" count="2" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="66" count="8" type="stmt"/>
+        <line num="68" count="8" type="stmt"/>
+        <line num="110" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.hooks">
+      <metrics statements="13" coveredstatements="13" conditionals="2" coveredconditionals="1" methods="7" coveredmethods="6"/>
+      <file name="use-verification-code.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/hooks/use-verification-code.ts">
+        <metrics statements="13" coveredstatements="13" conditionals="2" coveredconditionals="1" methods="7" coveredmethods="6"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="20" count="14" type="stmt"/>
+        <line num="21" count="14" type="stmt"/>
+        <line num="23" count="14" type="stmt"/>
+        <line num="24" count="7" type="stmt"/>
+        <line num="27" count="14" type="stmt"/>
+        <line num="28" count="7" type="stmt"/>
+        <line num="29" count="7" type="stmt"/>
+        <line num="32" count="14" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="14" type="stmt"/>
+        <line num="34" count="14" type="stmt"/>
+        <line num="36" count="14" type="stmt"/>
+        <line num="38" count="14" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.i18n">
+      <metrics statements="13" coveredstatements="13" conditionals="6" coveredconditionals="4" methods="2" coveredmethods="2"/>
+      <file name="ar.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/i18n/ar.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="8" count="3" type="stmt"/>
+      </file>
+      <file name="en.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/i18n/en.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="7" count="3" type="stmt"/>
+      </file>
+      <file name="index.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/i18n/index.ts">
+        <metrics statements="11" coveredstatements="11" conditionals="6" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="25" count="285" type="stmt"/>
+        <line num="26" count="285" type="cond" truecount="1" falsecount="1"/>
+        <line num="27" count="285" type="cond" truecount="1" falsecount="1"/>
+        <line num="28" count="285" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="31" type="stmt"/>
+        <line num="30" count="54" type="stmt"/>
+        <line num="33" count="285" type="stmt"/>
+        <line num="37" count="20" type="stmt"/>
+        <line num="38" count="20" type="stmt"/>
+        <line num="39" count="20" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.mocks">
+      <metrics statements="64" coveredstatements="62" conditionals="22" coveredconditionals="21" methods="27" coveredmethods="27"/>
+      <file name="devPanelControls.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/mocks/devPanelControls.ts">
+        <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="39" count="3" type="stmt"/>
+        <line num="40" count="3" type="stmt"/>
+        <line num="44" count="26" type="stmt"/>
+        <line num="48" count="38" type="stmt"/>
+        <line num="49" count="38" type="stmt"/>
+        <line num="50" count="4" type="stmt"/>
+        <line num="55" count="28" type="stmt"/>
+        <line num="60" count="5" type="stmt"/>
+      </file>
+      <file name="partnerReply.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/mocks/partnerReply.ts">
+        <metrics statements="25" coveredstatements="23" conditionals="8" coveredconditionals="7" methods="8" coveredmethods="8"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="32" count="5" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="38" count="7" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="54" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="57" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="60" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="66" count="2" type="stmt"/>
+        <line num="68" count="2" type="stmt"/>
+        <line num="72" count="3" type="stmt"/>
+        <line num="75" count="1" type="stmt"/>
+        <line num="77" count="3" type="stmt"/>
+        <line num="78" count="3" type="stmt"/>
+        <line num="83" count="6" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="86" count="6" type="stmt"/>
+      </file>
+      <file name="reciprocity.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/mocks/reciprocity.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="8" coveredconditionals="8" methods="7" coveredmethods="7"/>
+        <line num="15" count="66" type="stmt"/>
+        <line num="16" count="66" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="21" count="65" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1897" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="42" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="52" count="3" type="stmt"/>
+        <line num="56" count="5" type="stmt"/>
+      </file>
+      <file name="server.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/mocks/server.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="6" coveredconditionals="6" methods="6" coveredmethods="6"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="38" count="3" type="stmt"/>
+        <line num="39" count="3" type="stmt"/>
+        <line num="50" count="5" type="stmt"/>
+        <line num="51" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="54" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="57" count="3" type="stmt"/>
+        <line num="58" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.mocks.seed">
+      <metrics statements="45" coveredstatements="42" conditionals="11" coveredconditionals="8" methods="6" coveredmethods="6"/>
+      <file name="profiles.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/mocks/seed/profiles.ts">
+        <metrics statements="45" coveredstatements="42" conditionals="11" coveredconditionals="8" methods="6" coveredmethods="6"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
+        <line num="65" count="1594" type="stmt"/>
+        <line num="66" count="1594" type="stmt"/>
+        <line num="67" count="1594" type="stmt"/>
+        <line num="68" count="1594" type="stmt"/>
+        <line num="69" count="1594" type="stmt"/>
+        <line num="74" count="994" type="stmt"/>
+        <line num="77" count="2" type="stmt"/>
+        <line num="80" count="2" type="stmt"/>
+        <line num="81" count="2" type="stmt"/>
+        <line num="83" count="2" type="stmt"/>
+        <line num="84" count="120" type="stmt"/>
+        <line num="86" count="120" type="stmt"/>
+        <line num="87" count="120" type="stmt"/>
+        <line num="88" count="120" type="stmt"/>
+        <line num="89" count="120" type="stmt"/>
+        <line num="90" count="120" type="stmt"/>
+        <line num="91" count="120" type="stmt"/>
+        <line num="92" count="120" type="stmt"/>
+        <line num="94" count="120" type="stmt"/>
+        <line num="95" count="120" type="stmt"/>
+        <line num="96" count="514" type="stmt"/>
+        <line num="99" count="120" type="stmt"/>
+        <line num="100" count="120" type="stmt"/>
+        <line num="102" count="120" type="cond" truecount="2" falsecount="0"/>
+        <line num="108" count="120" type="stmt"/>
+        <line num="115" count="120" type="stmt"/>
+        <line num="130" count="2" type="stmt"/>
+        <line num="133" count="2" type="stmt"/>
+        <line num="137" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="140" count="2" type="stmt"/>
+        <line num="141" count="120" type="cond" truecount="1" falsecount="1"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="145" count="120" type="stmt"/>
+        <line num="146" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="151" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.network">
+      <metrics statements="23" coveredstatements="23" conditionals="8" coveredconditionals="8" methods="11" coveredmethods="11"/>
+      <file name="connectivity.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/network/connectivity.ts">
+        <metrics statements="23" coveredstatements="23" conditionals="8" coveredconditionals="8" methods="11" coveredmethods="11"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="30" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="14" type="stmt"/>
+        <line num="35" count="6" type="stmt"/>
+        <line num="40" count="24" type="stmt"/>
+        <line num="41" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="14" type="stmt"/>
+        <line num="43" count="14" type="stmt"/>
+        <line num="47" count="2" type="stmt"/>
+        <line num="50" count="26" type="stmt"/>
+        <line num="54" count="4" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="59" count="7" type="stmt"/>
+        <line num="64" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="70" count="2" type="stmt"/>
+        <line num="71" count="2" type="stmt"/>
+        <line num="72" count="2" type="stmt"/>
+        <line num="73" count="2" type="stmt"/>
+        <line num="79" count="5" type="stmt"/>
+        <line num="80" count="5" type="stmt"/>
+        <line num="81" count="5" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="src.outbox">
+      <metrics statements="218" coveredstatements="212" conditionals="108" coveredconditionals="96" methods="42" coveredmethods="39"/>
+      <file name="actions.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/outbox/actions.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="8" coveredconditionals="8" methods="2" coveredmethods="2"/>
+        <line num="44" count="17" type="stmt"/>
+        <line num="49" count="8" type="cond" truecount="8" falsecount="0"/>
+        <line num="53" count="3" type="stmt"/>
+        <line num="57" count="3" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="61" count="1" type="stmt"/>
+      </file>
+      <file name="backoff.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/outbox/backoff.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="2" coveredconditionals="1" methods="4" coveredmethods="4"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="14" count="10" type="stmt"/>
+        <line num="15" count="10" type="stmt"/>
+        <line num="23" count="8" type="stmt"/>
+        <line num="24" count="8" type="stmt"/>
+        <line num="29" count="5" type="stmt"/>
+        <line num="34" count="8" type="stmt"/>
+      </file>
+      <file name="drain.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/outbox/drain.ts">
+        <metrics statements="104" coveredstatements="98" conditionals="63" coveredconditionals="53" methods="16" coveredmethods="13"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="71" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="74" count="23" type="stmt"/>
+        <line num="75" count="23" type="stmt"/>
+        <line num="76" count="23" type="stmt"/>
+        <line num="77" count="22" type="stmt"/>
+        <line num="78" count="22" type="stmt"/>
+        <line num="79" count="22" type="cond" truecount="4" falsecount="0"/>
+        <line num="80" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="82" count="22" type="stmt"/>
+        <line num="84" count="23" type="stmt"/>
+        <line num="94" count="22" type="stmt"/>
+        <line num="95" count="22" type="stmt"/>
+        <line num="96" count="1" type="stmt"/>
+        <line num="97" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="98" count="1" type="stmt"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="105" count="36" type="cond" truecount="4" falsecount="0"/>
+        <line num="111" count="22" type="stmt"/>
+        <line num="112" count="22" type="stmt"/>
+        <line num="113" count="41" type="stmt"/>
+        <line num="114" count="13" type="stmt"/>
+        <line num="115" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="118" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="119" count="4" type="stmt"/>
+        <line num="120" count="4" type="stmt"/>
+        <line num="123" count="41" type="cond" truecount="2" falsecount="0"/>
+        <line num="124" count="19" type="stmt"/>
+        <line num="127" count="22" type="stmt"/>
+        <line num="128" count="22" type="cond" truecount="2" falsecount="0"/>
+        <line num="129" count="17" type="stmt"/>
+        <line num="130" count="17" type="stmt"/>
+        <line num="132" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="133" count="2" type="stmt"/>
+        <line num="137" count="3" type="cond" truecount="5" falsecount="0"/>
+        <line num="138" count="2" type="stmt"/>
+        <line num="140" count="3" type="stmt"/>
+        <line num="145" count="22" type="stmt"/>
+        <line num="147" count="22" type="stmt"/>
+        <line num="148" count="22" type="stmt"/>
+        <line num="154" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="155" count="5" type="stmt"/>
+        <line num="156" count="5" type="stmt"/>
+        <line num="158" count="12" type="stmt"/>
+        <line num="161" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="162" count="8" type="stmt"/>
+        <line num="163" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="164" count="8" type="stmt"/>
+        <line num="167" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="168" count="5" type="stmt"/>
+        <line num="169" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="170" count="5" type="stmt"/>
+        <line num="173" count="17" type="stmt"/>
+        <line num="175" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="178" count="1" type="stmt"/>
+        <line num="181" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="182" count="4" type="stmt"/>
+        <line num="183" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="184" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="185" count="1" type="stmt"/>
+        <line num="186" count="1" type="stmt"/>
+        <line num="188" count="1" type="stmt"/>
+        <line num="190" count="2" type="stmt"/>
+        <line num="193" count="2" type="stmt"/>
+        <line num="194" count="2" type="stmt"/>
+        <line num="195" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="196" count="1" type="stmt"/>
+        <line num="203" count="1" type="stmt"/>
+        <line num="205" count="1" type="stmt"/>
+        <line num="207" count="2" type="stmt"/>
+        <line num="212" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="213" count="0" type="stmt"/>
+        <line num="216" count="3" type="stmt"/>
+        <line num="217" count="1" type="stmt"/>
+        <line num="218" count="1" type="stmt"/>
+        <line num="229" count="3" type="stmt"/>
+        <line num="231" count="2" type="stmt"/>
+        <line num="234" count="1" type="stmt"/>
+        <line num="235" count="1" type="stmt"/>
+        <line num="236" count="1" type="stmt"/>
+        <line num="246" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="247" count="1" type="stmt"/>
+        <line num="249" count="1" type="stmt"/>
+        <line num="251" count="1" type="stmt"/>
+        <line num="253" count="1" type="stmt"/>
+        <line num="254" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="255" count="0" type="stmt"/>
+        <line num="259" count="1" type="stmt"/>
+        <line num="260" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="261" count="0" type="stmt"/>
+        <line num="268" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="269" count="1" type="stmt"/>
+        <line num="274" count="0" type="stmt"/>
+        <line num="279" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="280" count="2" type="stmt"/>
+        <line num="281" count="2" type="stmt"/>
+        <line num="283" count="13" type="stmt"/>
+        <line num="284" count="13" type="stmt"/>
+        <line num="285" count="13" type="stmt"/>
+      </file>
+      <file name="messages.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/outbox/messages.ts">
+        <metrics statements="31" coveredstatements="31" conditionals="15" coveredconditionals="15" methods="5" coveredmethods="5"/>
+        <line num="34" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="44" count="6" type="stmt"/>
+        <line num="45" count="6" type="stmt"/>
+        <line num="47" count="5" type="stmt"/>
+        <line num="48" count="5" type="stmt"/>
+        <line num="49" count="5" type="stmt"/>
+        <line num="50" count="5" type="stmt"/>
+        <line num="58" count="5" type="stmt"/>
+        <line num="59" count="5" type="stmt"/>
+        <line num="60" count="5" type="stmt"/>
+        <line num="72" count="5" type="stmt"/>
+        <line num="73" count="5" type="stmt"/>
+        <line num="74" count="5" type="stmt"/>
+        <line num="79" count="4" type="stmt"/>
+        <line num="80" count="4" type="stmt"/>
+        <line num="82" count="3" type="stmt"/>
+        <line num="83" count="3" type="cond" truecount="5" falsecount="0"/>
+        <line num="84" count="2" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="98" count="4" type="stmt"/>
+        <line num="99" count="4" type="stmt"/>
+        <line num="101" count="4" type="stmt"/>
+        <line num="102" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="103" count="1" type="stmt"/>
+        <line num="105" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="106" count="1" type="stmt"/>
+        <line num="109" count="2" type="stmt"/>
+        <line num="110" count="2" type="stmt"/>
+      </file>
+      <file name="queue.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/outbox/queue.ts">
+        <metrics statements="30" coveredstatements="30" conditionals="6" coveredconditionals="6" methods="8" coveredmethods="8"/>
+        <line num="29" count="6" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="44" count="6" type="stmt"/>
+        <line num="45" count="6" type="stmt"/>
+        <line num="46" count="6" type="stmt"/>
+        <line num="47" count="6" type="stmt"/>
+        <line num="48" count="6" type="stmt"/>
+        <line num="50" count="6" type="stmt"/>
+        <line num="62" count="3" type="stmt"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="64" count="3" type="stmt"/>
+        <line num="65" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="70" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="73" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="80" count="3" type="stmt"/>
+        <line num="85" count="9" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="96" count="1" type="stmt"/>
+        <line num="97" count="1" type="stmt"/>
+        <line num="98" count="1" type="stmt"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="100" count="1" type="stmt"/>
+      </file>
+      <file name="vouching.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/outbox/vouching.ts">
+        <metrics statements="37" coveredstatements="37" conditionals="14" coveredconditionals="13" methods="7" coveredmethods="7"/>
+        <line num="27" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="3" type="stmt"/>
+        <line num="37" count="4" type="stmt"/>
+        <line num="38" count="4" type="stmt"/>
+        <line num="40" count="3" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+        <line num="43" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="53" count="2" type="stmt"/>
+        <line num="54" count="2" type="stmt"/>
+        <line num="56" count="3" type="stmt"/>
+        <line num="68" count="4" type="stmt"/>
+        <line num="69" count="4" type="stmt"/>
+        <line num="71" count="3" type="stmt"/>
+        <line num="72" count="3" type="stmt"/>
+        <line num="73" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="1" type="stmt"/>
+        <line num="76" count="2" type="stmt"/>
+        <line num="77" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="80" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="93" count="3" type="stmt"/>
+        <line num="103" count="3" type="stmt"/>
+        <line num="104" count="3" type="stmt"/>
+        <line num="106" count="2" type="stmt"/>
+        <line num="107" count="2" type="stmt"/>
+        <line num="108" count="2" type="stmt"/>
+        <line num="109" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="110" count="1" type="stmt"/>
+        <line num="112" count="1" type="stmt"/>
+        <line num="119" count="1" type="stmt"/>
+        <line num="121" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.realtime">
+      <metrics statements="57" coveredstatements="57" conditionals="22" coveredconditionals="20" methods="17" coveredmethods="17"/>
+      <file name="dedupe.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/realtime/dedupe.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="12" count="5" type="stmt"/>
+        <line num="14" count="5" type="stmt"/>
+        <line num="17" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="20" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="23" count="9" type="stmt"/>
+        <line num="24" count="9" type="stmt"/>
+        <line num="25" count="9" type="stmt"/>
+      </file>
+      <file name="publishes.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/realtime/publishes.ts">
+        <metrics statements="30" coveredstatements="30" conditionals="12" coveredconditionals="10" methods="11" coveredmethods="11"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="34" count="12" type="stmt"/>
+        <line num="35" count="12" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="41" count="11" type="stmt"/>
+        <line num="42" count="11" type="stmt"/>
+        <line num="43" count="56" type="stmt"/>
+        <line num="53" count="9" type="stmt"/>
+        <line num="54" count="9" type="stmt"/>
+        <line num="56" count="9" type="stmt"/>
+        <line num="57" count="9" type="stmt"/>
+        <line num="58" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="71" count="10" type="stmt"/>
+        <line num="72" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="74" count="3" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="77" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="80" count="4" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+        <line num="84" count="1" type="stmt"/>
+        <line num="89" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="90" count="1" type="stmt"/>
+        <line num="92" count="10" type="stmt"/>
+        <line num="96" count="8" type="stmt"/>
+        <line num="97" count="8" type="stmt"/>
+        <line num="102" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="103" count="1" type="stmt"/>
+        <line num="108" count="1" type="stmt"/>
+      </file>
+      <file name="realtimeChannel.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/realtime/realtimeChannel.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="6" coveredconditionals="6" methods="4" coveredmethods="4"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="33" count="3" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="50" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
+        <line num="65" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="73" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.store.mode">
+      <metrics statements="15" coveredstatements="13" conditionals="2" coveredconditionals="1" methods="6" coveredmethods="5"/>
+      <file name="AppModeProvider.tsx" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/store/mode/AppModeProvider.tsx">
+        <metrics statements="12" coveredstatements="11" conditionals="2" coveredconditionals="1" methods="4" coveredmethods="4"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="29" count="7" type="stmt"/>
+        <line num="31" count="7" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="36" count="7" type="stmt"/>
+        <line num="37" count="7" type="stmt"/>
+        <line num="41" count="7" type="stmt"/>
+        <line num="45" count="7" type="stmt"/>
+        <line num="46" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="49" count="7" type="stmt"/>
+      </file>
+      <file name="mode-snapshot.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/store/mode/mode-snapshot.ts">
+        <metrics statements="3" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="1"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.theme">
+      <metrics statements="19" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="1"/>
+      <file name="breakpoints.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/theme/breakpoints.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="7" count="11" type="stmt"/>
+      </file>
+      <file name="index.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/theme/index.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="tokens.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/theme/tokens.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="9" count="11" type="stmt"/>
+        <line num="24" count="11" type="stmt"/>
+        <line num="25" count="11" type="stmt"/>
+        <line num="27" count="11" type="stmt"/>
+        <line num="128" count="11" type="stmt"/>
+        <line num="146" count="11" type="stmt"/>
+        <line num="163" count="11" type="stmt"/>
+        <line num="198" count="11" type="stmt"/>
+        <line num="210" count="11" type="stmt"/>
+      </file>
+      <file name="unistyles.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/theme/unistyles.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="19" count="11" type="stmt"/>
+      </file>
+      <file name="use-theme.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/theme/use-theme.ts">
+        <metrics statements="8" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="1"/>
+        <line num="10" count="73" type="stmt"/>
+        <line num="11" count="73" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.theme.themes">
+      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="dark.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/theme/themes/dark.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="8" count="11" type="stmt"/>
+      </file>
+      <file name="light.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/theme/themes/light.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="8" count="11" type="stmt"/>
+      </file>
+      <file name="navigation.ts" path="/Users/mac/Documents/jenish/vouch-expo-offline/src/theme/themes/navigation.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="19" count="11" type="stmt"/>
+        <line num="32" count="11" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

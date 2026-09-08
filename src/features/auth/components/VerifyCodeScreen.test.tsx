@@ -5,7 +5,7 @@ import VerifyCodeScreen from "@/src/features/auth/components/VerifyCodeScreen";
 
 const mockVerify = jest.fn<(code: string) => { ok: boolean; reason?: "format" | "mismatch" }>();
 const mockResend = jest.fn<() => Promise<void>>();
-const mockRouterBack = jest.fn();
+const mockRouterReplace = jest.fn();
 const mockSignIn = jest.fn<() => Promise<string>>();
 // issuedAt 60s ago so the 30s cooldown has already elapsed (resend visible).
 let mockSnapshot: { code: string; issuedAt: Date } = {
@@ -17,7 +17,7 @@ let mockSnapshot: { code: string; issuedAt: Date } = {
 // the `mock*` const declarations; any eager use inside the factory hits the
 // temporal-dead-zone and yields undefined.
 jest.mock("expo-router", () => ({
-  router: { back: () => mockRouterBack(), push: jest.fn() },
+  router: { replace: (path: string) => mockRouterReplace(path), push: jest.fn(), back: jest.fn() },
   useLocalSearchParams: () => ({ phone: "+15550100" }),
 }));
 
@@ -129,6 +129,6 @@ describe("VerifyCodeScreen (REQUIREMENTS §3.1)", () => {
   it("returns to the phone screen without losing the number", () => {
     const view = render(<VerifyCodeScreen />);
     fireEvent.press(view.getByLabelText("Change phone number"));
-    expect(mockRouterBack).toHaveBeenCalled();
+    expect(mockRouterReplace).toHaveBeenCalledWith("/(auth)/sign-in");
   });
 });

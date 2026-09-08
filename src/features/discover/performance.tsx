@@ -52,6 +52,6 @@ export function DeckFpsOverlay() {
 const fpsOverlayStyle = {
   position: "absolute" as const,
   top: 4,
-  right: 4,
+  left: 4,
   zIndex: 1000,
 };

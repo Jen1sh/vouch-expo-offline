@@ -88,18 +88,18 @@ describe("VoucherBrowseRow shortlist isolation (REQUIREMENTS §3.9/§4.6)", () =
     const rowB = getByTestId("voucher-browse-row-b-2");
 
     // Both rows start at a single render each.
-    expect(within(rowA).getByText("\u00d71")).toBeTruthy();
-    expect(within(rowB).getByText("\u00d71")).toBeTruthy();
+    expect(within(rowA).getByText(/re-render \u00d71$/)).toBeTruthy();
+    expect(within(rowB).getByText(/re-render \u00d71$/)).toBeTruthy();
 
     fireEvent.press(within(rowA).getByLabelText("Shortlist Ada"));
 
     // Row A: bookmark flips and its render counter advances by exactly one.
     expect(within(rowA).getByLabelText("Remove Ada from shortlist")).toBeTruthy();
-    expect(within(rowA).getByText("\u00d72")).toBeTruthy();
+    expect(within(rowA).getByText(/re-render \u00d72$/)).toBeTruthy();
 
     // Row B: untouched — same label, same single-render counter.
     expect(within(rowB).getByLabelText("Shortlist Bo")).toBeTruthy();
-    expect(within(rowB).getByText("\u00d71")).toBeTruthy();
+    expect(within(rowB).getByText(/re-render \u00d71$/)).toBeTruthy();
   });
 
   it("renders a shortlisted candidate as a selected bookmark on mount", () => {

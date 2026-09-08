@@ -84,10 +84,10 @@ const BrowseRow = memo(function BrowseRow({ profile, onToggleLike, onPressProfil
             color={liked ? colors.secondary : colors.iconDefault}
           />
         </Pressable>
-        {__DEV__ ? <BrowseRowRenderBadge profileId={profile.id} /> : null}
       </View>
-    </Pressable>
-  );
+    {__DEV__ ? <BrowseRowRenderBadge profileId={profile.id} /> : null}
+  </Pressable>
+);
 });
 
 export default BrowseRow;

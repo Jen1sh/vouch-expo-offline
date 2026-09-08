@@ -10,7 +10,7 @@ import { NetworkOfflineError } from "@/src/mocks/server";
 import type { OutboxItemRow } from "@/src/db/schema/outbox";
 
 const mockEnsureMigrated = jest.fn<() => Promise<void>>();
-const mockClaim = jest.fn<() => Promise<OutboxItemRow | null>>();
+const mockClaim = jest.fn<(now: Date, client: unknown, onClaimed?: (tx: unknown, row: OutboxItemRow) => Promise<void>) => Promise<OutboxItemRow | null>>();
 const mockRecover = jest.fn<() => Promise<OutboxItemRow[]>>();
 const mockMarkDone = jest.fn<(id: string, doneAt: Date) => Promise<void>>();
 const mockFailItem = jest.fn<(id: string, attempts: number, lastError: string, failedAt: Date) => Promise<void>>();
@@ -32,7 +32,8 @@ const mockSubscribeOffline = jest.fn<(listener: () => void) => () => void>();
 jest.mock("@/src/db/client", () => ({ db: {} }));
 jest.mock("@/src/db/migrate", () => ({ ensureMigrated: () => mockEnsureMigrated() }));
 jest.mock("@/src/db/queries/outbox.queries", () => ({
-  claimNextDueItem: () => mockClaim(),
+  claimNextDueItem: (now: Date, client: unknown, onClaimed?: (tx: unknown, row: OutboxItemRow) => Promise<void>) =>
+    mockClaim(now, client, onClaimed),
   recoverInFlightItems: () => mockRecover(),
   markOutboxItemDone: (id: string, doneAt: Date) => mockMarkDone(id, doneAt),
   failOutboxItem: (id: string, attempts: number, lastError: string, failedAt: Date) =>
@@ -86,7 +87,13 @@ function fakeRow(overrides: Partial<OutboxItemRow> = {}): OutboxItemRow {
 }
 
 function claimQueue(rows: (OutboxItemRow | null)[]): void {
-  mockClaim.mockImplementation(async () => rows.shift() ?? null);
+  mockClaim.mockImplementation(async (_now: Date, _client: unknown, onClaimed?: (tx: unknown, row: OutboxItemRow) => Promise<void>) => {
+    const row = rows.shift() ?? null;
+    if (row && onClaimed) {
+      await onClaimed("fake-tx", row);
+    }
+    return row;
+  });
 }
 
 beforeEach(() => {
@@ -257,5 +264,83 @@ describe("outbox drain (REQUIREMENTS §4.1, §4.7-2)", () => {
 
     warn.mockRestore();
     jest.clearAllTimers();
+  });
+
+  it("transitions a sendMessage item to 'sending' during claim, then marks it sent", async () => {
+    const msgRow = fakeRow({
+      id: "msg-item-1",
+      type: "sendMessage",
+      payload: { matchId: "m1", messageId: "msg-1", body: "hi" },
+    });
+    mockGetMessage.mockResolvedValue({ id: "msg-1" });
+    claimQueue([msgRow, null]);
+
+    const result = await attemptDrain();
+
+    expect(mockTransitionSending).toHaveBeenCalledTimes(1);
+    expect(mockSetMessageStatusMirror).toHaveBeenCalledWith("msg-1", "sending");
+    expect(mockMarkMessageSent).toHaveBeenCalledWith("msg-item-1", "msg-1", expect.any(Date));
+    expect(mockSetMessageStatusMirror).toHaveBeenCalledWith("msg-1", "sent");
+    expect(mockSchedulePartnerReply).toHaveBeenCalledWith("m1");
+    expect(result.completed).toBe(1);
+  });
+
+  it("permanently fails a sendMessage item past the retry cap", async () => {
+    const msgRow = fakeRow({
+      id: "msg-fail",
+      type: "sendMessage",
+      payload: { matchId: "m1", messageId: "msg-2", body: "fail" },
+      attempts: MAX_OUTBOX_ATTEMPTS - 1,
+    });
+    mockGetMessage.mockResolvedValue({ id: "msg-2" });
+    claimQueue([msgRow, null]);
+    mockRequest.mockRejectedValueOnce(new Error("5xx"));
+
+    const result = await attemptDrain();
+
+    expect(mockFailMessageSend).toHaveBeenCalledWith("msg-fail", "msg-2", MAX_OUTBOX_ATTEMPTS, expect.any(String), expect.any(Date));
+    expect(mockSetMessageStatusMirror).toHaveBeenCalledWith("msg-2", "failed");
+    expect(result.completed).toBe(0);
+  });
+
+  it("reschedules a sendMessage item on transient failure (under retry cap)", async () => {
+    jest.useFakeTimers();
+    const msgRow = fakeRow({
+      id: "msg-retry",
+      type: "sendMessage",
+      payload: { matchId: "m1", messageId: "msg-3", body: "retry" },
+      attempts: 1,
+    });
+    mockGetMessage.mockResolvedValue({ id: "msg-3" });
+    claimQueue([msgRow, null]);
+    mockRequest.mockRejectedValueOnce(new Error("5xx"));
+
+    const result = await attemptDrain();
+
+    expect(mockRescheduleMessageSend).toHaveBeenCalledTimes(1);
+    expect(mockRescheduleMessageSend).toHaveBeenCalledWith(
+      "msg-retry",
+      "msg-3",
+      { attempts: 2, nextAttemptAt: expect.any(Date) },
+      expect.any(String),
+      expect.any(Date)
+    );
+    expect(mockSetMessageStatusMirror).toHaveBeenCalledWith("msg-3", "queued");
+    expect(result.completed).toBe(0);
+    jest.clearAllTimers();
+  });
+
+  it("schedules partner reply on successful sendMessage delivery", async () => {
+    const msgRow = fakeRow({
+      id: "msg-reply",
+      type: "sendMessage",
+      payload: { matchId: "m2", messageId: "msg-4", body: "hey" },
+    });
+    mockGetMessage.mockResolvedValue({ id: "msg-4" });
+    claimQueue([msgRow, null]);
+
+    await attemptDrain();
+
+    expect(mockSchedulePartnerReply).toHaveBeenCalledWith("m2");
   });
 });

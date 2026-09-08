@@ -94,10 +94,10 @@ const VoucherBrowseRow = memo(function VoucherBrowseRow({
             color={shortlisted ? colors.secondary : colors.iconDefault}
           />
         </Pressable>
-        {__DEV__ ? <VoucherRowRenderBadge profileId={profile.id} /> : null}
       </View>
-    </Pressable>
-  );
+    {__DEV__ ? <VoucherRowRenderBadge profileId={profile.id} /> : null}
+  </Pressable>
+);
 });
 
 export default VoucherBrowseRow;

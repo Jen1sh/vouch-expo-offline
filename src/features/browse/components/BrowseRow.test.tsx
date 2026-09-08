@@ -86,18 +86,18 @@ describe("BrowseRow like-state isolation (REQUIREMENTS §3.4/§4.6)", () => {
     const rowB = getByTestId("browse-row-b-2");
 
     // Both rows start at a single render each.
-    expect(within(rowA).getByText("\u00d71")).toBeTruthy();
-    expect(within(rowB).getByText("\u00d71")).toBeTruthy();
+    expect(within(rowA).getByText(/re-render \u00d71$/)).toBeTruthy();
+    expect(within(rowB).getByText(/re-render \u00d71$/)).toBeTruthy();
 
     fireEvent.press(within(rowA).getByLabelText("Like Ada"));
 
     // Row A: heart flips and its render counter advances by exactly one.
     expect(within(rowA).getByLabelText("Remove like from Ada")).toBeTruthy();
-    expect(within(rowA).getByText("\u00d72")).toBeTruthy();
+    expect(within(rowA).getByText(/re-render \u00d72$/)).toBeTruthy();
 
     // Row B: untouched — same label, same single-render counter.
     expect(within(rowB).getByLabelText("Like Bo")).toBeTruthy();
-    expect(within(rowB).getByText("\u00d71")).toBeTruthy();
+    expect(within(rowB).getByText(/re-render \u00d71$/)).toBeTruthy();
   });
 
   it("renders a persisted like as a selected heart on mount", () => {

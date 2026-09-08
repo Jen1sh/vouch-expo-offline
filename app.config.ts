@@ -1,7 +1,7 @@
 import type { ExpoConfig } from "expo/config";
 
 const config: ExpoConfig = {
-  name: "vouch-expo-offline",
+  name: "Vouch Offline",
   slug: "vouch-expo-offline",
   version: "1.0.0",
   orientation: "portrait",
@@ -55,6 +55,11 @@ const config: ExpoConfig = {
   ],
   experiments: {
     typedRoutes: true,
+  },
+  extra: {
+    eas: {
+      projectId: "304cc9a2-16de-495a-9ec6-e7e4d2dc4f5e",
+    },
   },
 };
 
