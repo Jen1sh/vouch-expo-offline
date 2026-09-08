@@ -217,9 +217,14 @@ Two persistence layers with different jobs:
   (`isConnected === false || isInternetReachable === false`; an unknown
   reachability reads as online to avoid a false-offline flash). `server.ts`
   rejects with `NetworkOfflineError`, `drain.ts` wakes on offline→online, and
-  the realtime `emit`/auto-replies go silent when offline. Jest mocks NetInfo
-  via `jest.setup.js` (official `netinfo-mock.js`); the toggle remains a manual
-  override so offline can still be exercised while online.
+  the realtime `emit`/auto-replies go silent when offline. Boot resilience
+  (REQUIREMENTS §4.7-2): the start/foreground/reconnect triggers route through
+  a self-healing `scheduleDrainAttempt` that re-schedules any thrown run on the
+  wake timer until it succeeds — so actions queued offline and left behind a
+  hard kill auto-drain on relaunch once online (with a "Synced N queued
+  actions" toast when a lifecycle drain actually flushes them). Jest mocks
+  NetInfo via `jest.setup.js` (official `netinfo-mock.js`); the toggle remains
+  a manual override so offline can still be exercised while online.
 - **Scope note:** every knob is live. Seed data is the deterministic 60-profile
   catalog (asserted by a unit test); Discover reads it from the in-memory
   generator, while Browse mirrors it **into SQLite** idempotently
@@ -265,11 +270,27 @@ Two persistence layers with different jobs:
   through `mocks/server.ts` `request()` with exponential backoff (`backoff.ts`:
   1s base, 30s cap, ±20% jitter, 5 attempts → `failed`). The walker triggers on
   enqueue, AppState foreground, and offline→online (Dev Panel toggle or real
-  connectivity). Offline just pauses (Pill: "Offline — swipes queued"). Dev
+  connectivity), and every trigger is self-healing (see below). Offline just
+  pauses (Pill: "Offline — swipes queued"). Dev
   Panel's **Dump outbox contents** now lists
   items + statuses (Refresh), and **Wipe local data** clears outbox + swipes via
   a confirm Alert. Design details + conflict rule + measured §4.6 numbers live
   in `docs/TECHNICAL.md`.
+
+- **Boot auto-drain after a kill (§4.7-2):** swipes/messages queued in an
+  offline session survive a force-kill in SQLite; the next launch's
+  `startOutboxWatcher` immediately drains them (recovering anything the kill
+  left `sending` first), and `subscribeOffline` wakes the drain again the moment
+  connectivity returns. Because every lifecycle trigger flows through
+  `scheduleDrainAttempt` in `drain.ts`, a cold-start drain that throws is
+  re-scheduled on the wake timer (exponential, 30s cap) instead of going
+  silent — the queue self-heals even if nothing else ever fires. When such a
+  run actually flushes items a "Synced N queued actions" toast appears; the Dev
+  Panel offline *toggle* is session-only (not persisted across a relaunch), so
+  reproducing the cross-kill pause uses real airplane mode, while the toggle
+  remains the quick online-device lever. `drain.test.ts` covers recovery,
+  offline pause/reconnect, FIFO/backoff/cap, the toast, and the self-healing
+  retry at the drain boundary (REQUIREMENTS §4.9).
 - **Perf evidence channel:** `src/features/discover/performance.tsx` overlays a
   Reanimated `PerformanceMonitor` (JS/UI FPS) on the deck in `__DEV__` and logs
   `[discover.perf] re-renders between swipes` — the numbers go into

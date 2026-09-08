@@ -28,7 +28,13 @@ Every mutating user action passes through `src/outbox/` — nothing writes the
 - `outbox/drain.ts` — the worker. Claims one item, calls `request()` from
   `mocks/server.ts` (which throws `NetworkOfflineError` / `WriteFailureError`
   per the Dev Panel knobs or real connectivity), retries with backoff, gives up
-  at the attempt cap.
+  at the attempt cap. Boot resilience: every trigger route (start, foreground,
+  offline→online) goes through a self-healing `scheduleDrainAttempt` — a run
+  that THROWS is logged and re-scheduled on the wake timer (exponential, 30s
+  cap) until it succeeds, so a queue left over a hard kill drains itself on
+  relaunch even if no later trigger fires. Lifecycle-triggered drains that
+  actually flush items surface a "Synced N queued actions" toast
+  (`showAppToast`); enqueue-time drains stay silent.
 - `outbox/backoff.ts` — pure schedule, unit-tested.
 
 **Backoff constants** (`backoff.ts`): `BASE_MS = 1000`, `CAP_MS = 30_000`,
@@ -440,6 +446,12 @@ paging), `match-seed-saturday` (6 messages, 2 unread), `match-seed-book`
   classification, RTL flip, exit geometry.
 - `src/outbox/backoff.test.ts` — exponential schedule, cap, jitter band, retry
   cap.
+- `src/outbox/drain.test.ts` — the §4.7-2 boundary suite: stranded-`sending`
+  replay after a hard kill (recovery runs before any claim), offline pause →
+  reconnect → exactly-once delivery, strict FIFO claim order, first-item backoff
+  stops the loop, attempt-cap → `failed` (loop continues), lifecycle-notified
+  "Synced N queued actions" toast, and the self-healing boot drain (a rejected
+  run chain-retries on the wake timer until it succeeds).
 - `src/mocks/seed/profiles.test.ts` — catalog size, shape, uniqueness,
   determinism.
 - `src/features/browse/model/browseFilters.test.ts` — filter transitions,
@@ -475,7 +487,8 @@ paging), `match-seed-saturday` (6 messages, 2 unread), `match-seed-book`
   theme/language chips + notifications write through the durable path,
   sign-out).
 
-Run with `npm test`. (Integration tests for the drain's ordering while a chat
-thread is live and the `=FailedOutboxItems` stream are deferred — the drain is
-only exercised on device today; unit tests cover each outcome branch via the
-paired mirror helpers.)
+Run with `npm test`. (A chat-live drain integration test and the
+`=FailedOutboxItems` stream are deferred — the drain's DB layer is only
+exercised on device today; `drain.test.ts` covers every outcome branch at the
+drain boundary via mocked query/mirror helpers, and the on-device §4.7-2 pass
+remains the real end-to-end proof.)

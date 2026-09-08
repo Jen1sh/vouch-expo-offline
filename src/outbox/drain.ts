@@ -1,5 +1,6 @@
 import { AppState } from "react-native";
 
+import { showAppToast } from "@/src/components/AppToast";
 import { db } from "@/src/db/client";
 import { ensureMigrated } from "@/src/db/migrate";
 import {
@@ -42,26 +43,43 @@ const OUTBOX_SYNC_PATH = "/outbox";
  * Items stranded in `sending` by an offline interrupt or hard kill are
  * recovered to `queued` at the top of every drain — exactly-once is preserved
  * across relaunch.
+ *
+ * Boot resilience (REQUIREMENTS §4.7-2): a cold-start drain that THROWS is
+ * never left silent — the trigger re-schedules itself on the wake timer with
+ * exponential backoff (30s cap) until it succeeds, so the queue self-heals
+ * instead of stalling after a hard kill even when no enqueue/foreground/
+ * connectivity edge ever fires again. Lifecycle-triggered drains that actually
+ * flush items surface a "Synced N queued actions" toast (enqueue-time drains
+ * stay silent so the online fast path doesn't spam).
  */
+
+export type DrainResult = { completed: number };
+
+type DrainOptions = { notify?: boolean };
 
 let draining = false;
 let wakeTimer: ReturnType<typeof setTimeout> | null = null;
 let watcherStarted = false;
+let bootAttempts = 0;
 
 type SendResult =
   | { outcome: "done" | "failed" }
   | { outcome: "blocked"; blockedBy: "offline" | "backoff"; wakeAtMs?: number };
 
 /** Fires the drain loop while ensuring only one runs at a time. */
-export async function attemptDrain(): Promise<void> {
+export async function attemptDrain(options: DrainOptions = {}): Promise<DrainResult> {
   if (draining) {
-    return;
+    return { completed: 0 };
   }
   draining = true;
   try {
     await ensureMigrated();
     await recoverStaleInFlight();
-    await drainLoop();
+    const completed = await drainLoop();
+    if (options.notify && completed > 0) {
+      showAppToast("success", `Synced ${completed} queued action${completed === 1 ? "" : "s"}`);
+    }
+    return { completed };
   } finally {
     draining = false;
   }
@@ -89,7 +107,8 @@ function payloadMessageId(item: OutboxItemRow): string | undefined {
     : undefined;
 }
 
-async function drainLoop(): Promise<void> {
+async function drainLoop(): Promise<number> {
+  let completed = 0;
   for (;;) {
     const item = await claimNextDueItem(new Date(), undefined, async (tx, claimed) => {
       const messageId = payloadMessageId(claimed);
@@ -102,11 +121,15 @@ async function drainLoop(): Promise<void> {
       }
     });
     if (!item) {
-      return;
+      return completed;
     }
 
     const result = await send(item);
-    if (result.outcome === "done" || result.outcome === "failed") {
+    if (result.outcome === "done") {
+      completed += 1;
+      continue;
+    }
+    if (result.outcome === "failed") {
       continue;
     }
 
@@ -114,7 +137,7 @@ async function drainLoop(): Promise<void> {
     if (result.outcome === "blocked" && result.blockedBy === "backoff" && result.wakeAtMs) {
       scheduleWake(result.wakeAtMs);
     }
-    return;
+    return completed;
   }
 }
 
@@ -192,8 +215,26 @@ function scheduleWake(ms: number): void {
   // Clamp so an absurd backoff can never hold the timer open forever.
   wakeTimer = setTimeout(() => {
     wakeTimer = null;
-    void attemptDrain();
+    scheduleDrainAttempt();
   }, Math.min(ms, 30_000));
+}
+
+/**
+ * Fires a drain such that a rejection is never swallowed silently: it is
+ * logged with context and re-scheduled on the wake timer (exponential backoff,
+ * 30s cap) until a run completes, and the backoff resets on success. This is
+ * what makes a boot-after-kill self-heal even when nothing else ever triggers.
+ */
+function scheduleDrainAttempt(options: DrainOptions = {}): void {
+  void attemptDrain(options)
+    .then(() => {
+      bootAttempts = 0;
+    })
+    .catch((error) => {
+      console.warn("[outbox] drain attempt failed; will retry:", error);
+      bootAttempts += 1;
+      scheduleWake(nextBackoffDelayMs(bootAttempts));
+    });
 }
 
 /**
@@ -207,21 +248,39 @@ export function startOutboxWatcher(): void {
   }
   watcherStarted = true;
 
-  void attemptDrain();
+  scheduleDrainAttempt({ notify: true });
 
   AppState.addEventListener("change", (state) => {
     if (state === "active") {
-      void attemptDrain();
+      scheduleDrainAttempt({ notify: true });
     }
   });
 
   subscribeOffline(() => {
     if (!isOffline()) {
-      void attemptDrain();
+      scheduleDrainAttempt({ notify: true });
     }
   });
+
+  // Close the ordering window where connectivity flipped back online before
+  // the listeners above registered: if we are already online, nudge once more
+  // (single-flight, so this is dead cheap when a drain just ran).
+  if (!isOffline()) {
+    scheduleDrainAttempt({ notify: true });
+  }
 }
 
 export function isDraining(): boolean {
   return draining;
+}
+
+/** Test-only: forget watcher/lock state and clear any pending wake timer. */
+export function __resetOutboxWatcherForTests(): void {
+  if (wakeTimer !== null) {
+    clearTimeout(wakeTimer);
+    wakeTimer = null;
+  }
+  draining = false;
+  watcherStarted = false;
+  bootAttempts = 0;
 }
