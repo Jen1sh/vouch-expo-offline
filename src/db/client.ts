@@ -1,6 +1,11 @@
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { openDatabaseSync } from "expo-sqlite";
 
+// Side-effect: on web, attach error listeners to the sqlite worker so a failed
+// worker logs to the console instead of silently becoming "Sync operation
+// timeout". No-op on native. Must run before the sync open below.
+import "@/src/db/web/worker-diagnostics";
+
 import * as catalogSchema from "@/src/db/schema/catalog";
 import * as matchesSchema from "@/src/db/schema/matches";
 import * as messagesSchema from "@/src/db/schema/messages";

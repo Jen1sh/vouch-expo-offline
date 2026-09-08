@@ -231,8 +231,27 @@ Two persistence layers with different jobs:
   (`seedCatalogIfEmpty`, migration `0003`) because its list paginates from the
   database — both feature trees are literally the same people. `ensureMigrated()`
   only applies schema (including `0003`).
-- Web bundling still works (wasm assetExts + no-dependency mocks); verified via
-  `npx expo export --platform web`.
+- **Web build:** bundling works (sourceExts `sql` + assetExts `wasm` for the
+  wa-sqlite worker). Because the app uses `openDatabaseSync`, expo-sqlite's web
+  worker channel runs `new SharedArrayBuffer(...)`, which is only defined in a
+  `crossOriginIsolated` page — so the **same-origin + credentialless** headers
+  are mandatory. `metro.config.js` injects them into the **dev server** via
+  `server.enhanceMiddleware`; static hosts must set them themselves
+  (`serve.json` covers `npx serve dist --config serve.json`). Gotchas fixed in
+  this repo: (1) the worker's first message lazily compiles the wa-sqlite wasm
+  + OPFS, slower than upstream's ~1M-iteration `Atomics.pause` spin, so the
+  module-scope `openDatabaseSync` used to die with "Sync operation timeout" —
+  `resolver.resolveRequest` redirects `expo-sqlite/web/WorkerChannel` (main
+  thread only) to `src/db/web/worker-channel.ts`, which spins against a
+  30s-warn / 90s-abort wall-clock deadline; (2) a worker that fails to load is
+  silently swallowed upstream (no `error` listener) and would just look like a
+  timeout — `src/db/web/worker-diagnostics.ts` (side-effect import in
+  `src/db/client.ts`) attaches `error`/`messageerror` listeners that log
+  `[expo-sqlite] web worker ...` to the browser console; (3) `tsconfig.json`
+  path-maps `expo-sqlite/web/*` so the patched channel typechecks (subpaths
+  aren't in the package `exports` map). Verified via `npx expo export
+  --platform web`, dev-server header + 200 checks, and bundle greps (patched
+  channel + diagnostics present on main; worker thread stays upstream).
 
 ## Discover deck, outbox, and undoing swipes
 
