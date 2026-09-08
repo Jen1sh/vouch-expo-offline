@@ -283,10 +283,9 @@ function ChoiceChips<V extends string>({
 }
 
 const styles = StyleSheet.create((theme) => ({
-  content: {
-    padding: theme.spacing.gutterMobile,
+content: {
+    paddingHorizontal: theme.spacing.gutterMobile,
     paddingBottom: theme.spacing['2xl'],
-    gap: theme.spacing.lg,
   },
   header: {
     flexDirection: 'row',

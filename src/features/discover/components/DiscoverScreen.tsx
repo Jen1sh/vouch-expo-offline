@@ -207,7 +207,6 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: theme.spacing.sm,
   },
   offlinePill: {
     backgroundColor: theme.colors.offlineBackground,

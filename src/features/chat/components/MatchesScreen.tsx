@@ -79,7 +79,6 @@ const styles = StyleSheet.create((theme) => ({
   },
   content: {
     paddingHorizontal: theme.spacing.gutterMobile,
-    paddingTop: theme.spacing.md,
     paddingBottom: theme.spacing['3xl'],
     gap: theme.spacing.xs,
   },

@@ -242,7 +242,6 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "flex-start",
     justifyContent: "space-between",
     gap: theme.spacing.sm,
-    paddingTop: theme.spacing.sm,
   },
   titleBlock: {
     flex: 1,

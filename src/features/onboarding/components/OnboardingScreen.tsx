@@ -88,7 +88,8 @@ const styles = StyleSheet.create((theme) => ({
   content: {
     flexGrow: 1,
     gap: theme.spacing.lg,
-    padding: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.lg,
     backgroundColor: theme.colors.surface,
   },
   actions: {

@@ -478,7 +478,6 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     paddingHorizontal: theme.spacing.gutterMobile,
-    paddingTop: theme.spacing.xl,
     paddingBottom: theme.spacing.sm,
   },
   headerText: {

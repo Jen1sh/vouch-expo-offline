@@ -179,7 +179,6 @@ const styles = StyleSheet.create((theme) => ({
     paddingBottom: theme.spacing.md,
   },
   header: {
-    paddingTop: theme.spacing.sm,
     gap: theme.spacing["2xs"],
   },
   listContent: {

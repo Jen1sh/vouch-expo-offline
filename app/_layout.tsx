@@ -12,16 +12,20 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { startOutboxWatcher } from "@/src/outbox";
-import { startChatRealtime } from "@/src/features/chat/realtime/chatRealtime";
-import DevPanelFab from "@/src/devpanel/DevPanelFab";
 import { AppToast } from "@/src/components/AppToast";
+import DevPanelFab from "@/src/devpanel/DevPanelFab";
 import { AuthProvider } from "@/src/features/auth/context/AuthProvider";
 import { useAuth } from "@/src/features/auth/context/use-auth";
+import { startChatRealtime } from "@/src/features/chat/realtime/chatRealtime";
 import { useSettingsBridge } from "@/src/features/settings/hooks/useSettingsBridge";
 import { useSettings } from "@/src/features/settings/store/settings";
+import { startOutboxWatcher } from "@/src/outbox";
 import { AppModeProvider } from "@/src/store/mode/AppModeProvider";
 import "@/src/theme/unistyles";
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+} from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -61,16 +65,20 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={navigationTheme}>
-        <AuthProvider>
-          <AppModeProvider>
-            <AppNavigator />
-          </AppModeProvider>
-        </AuthProvider>
-        <DevPanelFab />
-        <AppToast />
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <SafeAreaProvider>
+        <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
+          <ThemeProvider value={navigationTheme}>
+            <AuthProvider>
+              <AppModeProvider>
+                <AppNavigator />
+              </AppModeProvider>
+            </AuthProvider>
+            <DevPanelFab />
+            <AppToast />
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
@@ -80,7 +88,10 @@ function AppNavigator() {
   const { language } = useSettings();
 
   useEffect(() => {
-    if (status !== "unknown" && (status === "signedOut" || onboardingStatus !== "unknown")) {
+    if (
+      status !== "unknown" &&
+      (status === "signedOut" || onboardingStatus !== "unknown")
+    ) {
       SplashScreen.hideAsync();
     }
   }, [status, onboardingStatus]);
@@ -100,7 +111,10 @@ function AppNavigator() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack.Protected>
 
-      <Stack.Screen name="dev-panel" options={{ presentation: "modal", headerShown: false }} />
+      <Stack.Screen
+        name="dev-panel"
+        options={{ presentation: "modal", headerShown: false }}
+      />
     </Stack>
   );
 }
