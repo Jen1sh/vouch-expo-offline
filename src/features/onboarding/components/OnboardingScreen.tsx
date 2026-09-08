@@ -79,6 +79,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create((theme) => ({
   flex: {
     flex: 1,
+    backgroundColor: theme.colors.background,
   },
   centered: {
     flex: 1,

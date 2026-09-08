@@ -197,6 +197,7 @@ export default ThreadScreen;
 const styles = StyleSheet.create((theme) => ({
   screen: {
     flex: 1,
+    backgroundColor: theme.colors.surface,
   },
   list: {
     flex: 1,

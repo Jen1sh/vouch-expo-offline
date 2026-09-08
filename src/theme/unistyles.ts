@@ -1,26 +1,31 @@
-import { StyleSheet } from 'react-native-unistyles';
+import { StyleSheet } from "react-native-unistyles";
 
-import { breakpoints } from './breakpoints';
-import { light, type AppTheme } from './themes/light';
-import { dark } from './themes/dark';
+import { breakpoints } from "./breakpoints";
+import { dark } from "./themes/dark";
+import { light, type AppTheme } from "./themes/light";
 
 /**
  * Register themes + breakpoints with unistyles before any component renders.
  * Imported for its side effects from `app/_layout.tsx` (and the theme barrel).
  *
- * `adaptiveThemes: true` makes unistyles follow the OS color scheme so the
- * active theme flips light/dark automatically. Manual override for the
- * in-app Settings toggle goes through `UnistylesRuntime.setTheme`.
+ * `adaptiveThemes: false` + `initialTheme: "light"`: unistyles stays on the
+ * light theme until the in-app Settings choice is applied by
+ * `useSettingsBridge` (which calls `setAdaptiveThemes(true)` for "system" or
+ * `setTheme(mode)` otherwise). `initialTheme` is required on web — with more
+ * than one registered theme and adaptiveThemes off, web keeps `themeName`
+ * undefined and every module-scope `StyleSheet.create` throws at load unless a
+ * seed theme is provided.
  */
 StyleSheet.configure({
   themes: { light, dark },
   breakpoints,
   settings: {
-    adaptiveThemes: true,
+    adaptiveThemes: false,
+    initialTheme: "light",
   },
 });
 
-declare module 'react-native-unistyles' {
+declare module "react-native-unistyles" {
   export interface UnistylesThemes {
     light: AppTheme;
     dark: typeof dark;

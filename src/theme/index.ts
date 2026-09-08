@@ -14,5 +14,7 @@ export type {
 export { light } from './themes/light';
 export { dark } from './themes/dark';
 export type { AppTheme } from './themes/light';
+export { lightNavigationTheme, darkNavigationTheme } from './themes/navigation';
 export { StyleSheet } from 'react-native-unistyles';
+export { useUnistyles } from 'react-native-unistyles';
 export { useTheme, useColorMode, getTheme } from './use-theme';

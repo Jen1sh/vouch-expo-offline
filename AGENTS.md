@@ -5,9 +5,9 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v54.0.0/ before 
 ## Stack (verify before assuming)
 
 - Expo SDK **54**, React Native **0.81**, React **19**, TypeScript **5.9**.
-- **New Architecture** (`newArchEnabled: true`) and **React Compiler** (`experiments.reactCompiler: true`) are ON.
+- **New Architecture** (`newArchEnabled: true`) is ON. **React Compiler is OFF** (~no `experiments.reactCompiler`) — it was disabled because it interferes with react-native-unistyles theme updates (stale memoized style objects; see upstream issue #368). Don't re-enable it without retesting theme switching app-wide.
 - Managed workflow: no `android/` or `ios/` dirs committed (gitignored, generated). Config lives in `app.config.ts`.
-- Reanimated **4** + `react-native-worklets`; there is **no `babel.config.js`** — the Reanimated Babel plugin is provided automatically via `babel-preset-expo`. Don't add a manual config unless you know why.
+- Reanimated **4** + `react-native-worklets`; the Reanimated Babel plugin is provided automatically via `babel-preset-expo`. The only `babel.config.js` is a thin wrapper that adds `react-native-unistyles/plugin` (root: `src`; the plugin needs to run before the preset) and `inline-import` for `.sql`. Don't add a manual Reanimated config.
 
 ## Commands
 

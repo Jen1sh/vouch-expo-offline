@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { I18nManager, Platform } from "react-native";
 
 import { ensureMigrated } from "@/src/db/migrate";
@@ -39,7 +39,7 @@ export function useSettingsBridge(): void {
     };
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (themeMode === "system") {
       UnistylesRuntime.setAdaptiveThemes(true);
       return;
