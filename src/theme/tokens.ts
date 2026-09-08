@@ -149,6 +149,8 @@ export const radius = {
   md: 12,
   lg: 16,
   xl: 24,
+  /** Large surface cards (deck/vouch cards): a softer handheld rounding. */
+  '2xl': 32,
   full: 9999,
 } as const;
 

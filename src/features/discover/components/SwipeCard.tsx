@@ -72,7 +72,7 @@ export default function SwipeCard({ profile }: { profile: Profile }) {
 const styles = StyleSheet.create((theme) => ({
   card: {
     flex: 1,
-    borderRadius: theme.radius.xl,
+    borderRadius: theme.radius["2xl"],
     backgroundColor: theme.colors.surfaceElevated,
     overflow: "hidden",
     borderWidth: 1,

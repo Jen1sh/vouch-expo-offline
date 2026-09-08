@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, type LayoutChangeEvent } from "react-native";
+import { I18nManager, Pressable, type LayoutChangeEvent } from "react-native";
 import { router } from "expo-router";
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -11,10 +11,13 @@ import { useDiscoverDeck } from "@/src/features/discover/hooks/useDiscoverDeck";
 import {
   DECK_VISIBLE_SLOTS,
   exitVector,
+  UNDERCARD_SCALE_STEP,
+  UNDERCARD_TRANSLATE_STEP,
   type SwipeDirection,
 } from "@/src/features/discover/model/deck";
 import { DeckFpsOverlay, logSwipeCost, recordDiscoverRender } from "@/src/features/discover/performance";
 import { useDevPanelControls } from "@/src/mocks/devPanelControls";
+import { SEED_PROFILES } from "@/src/mocks/seed/profiles";
 import { StyleSheet, useTheme } from "@/src/theme";
 import type { Profile } from "@/src/types/profile";
 
@@ -50,7 +53,12 @@ export default function DiscoverScreen() {
     if (!direction) {
       return;
     }
-    const { x, y } = exitVector(direction, deckSizeRef.current.width, deckSizeRef.current.height);
+    const { x, y } = exitVector(
+      direction,
+      deckSizeRef.current.width,
+      deckSizeRef.current.height,
+      I18nManager.isRTL
+    );
     setPendingUndoEntry({ x, y });
     handleUndo();
   }, [handleUndo]);
@@ -67,9 +75,18 @@ export default function DiscoverScreen() {
       .slice(0, DECK_VISIBLE_SLOTS)
       .map((profileId, depth) => ({ profileId, depth }));
     const front = out[0];
-    if (front && pendingUndoEntry) {
-      // Undo: the restored card springs back in from where it was dismissed.
-      front.entry = pendingUndoEntry;
+    if (front) {
+      if (pendingUndoEntry) {
+        // Undo: the restored card springs back in from where it was dismissed.
+        front.entry = pendingUndoEntry;
+      } else if (SEED_PROFILES.length - deck.remaining.length > 0) {
+        // Normal advance: the promoted card rises out of the stack instead of
+        // popping in. It mounts at the deepest spent seat and springs home.
+        front.entry = {
+          scale: 1 - DECK_VISIBLE_SLOTS * UNDERCARD_SCALE_STEP,
+          y: DECK_VISIBLE_SLOTS * UNDERCARD_TRANSLATE_STEP,
+        };
+      }
     }
     return out;
   }, [deck.remaining, pendingUndoEntry]);

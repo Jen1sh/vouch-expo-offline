@@ -63,14 +63,27 @@ drained POST must carry it (the mock `request()` ignores the body today).
   "primary" drag alone decides: right→`like`, left→`skip`, up→`askVoucher`,
   small→null. In RTL (`I18nManager.isRTL`) horizontal semantics are mirrored so
   a leftward drag still means `like`.
-- `components/CardDeck.tsx`: one top `GestureDetector` card + up to
-  `DECK_VISIBLE_SLOTS` `StackedCard` under-cards. **All motion is Reanimated
-  shared values driven by `Gesture.Pan` worklets and `withSpring`** — there is
-  no `setState` per frame and no gesture package beyond gesture-handler.
-  `swipe()` (imperative handle) drives the same dismissal from the toolbar
-  buttons, which are the §4.9 accessibility alternative to raw gestures.
-- Undo re-entry: `entry { x, y, scale }` on the re-entering slot springs the
-  card back from the exact exit vector or from promotion (under-card scale).
+- `components/CardDeck.tsx`: one physical card per visible slot. **Only the front
+  card owns a `GestureDetector`**, and it remounts with the card — the shared
+  `frontGesture` object is never handed between detectors, which keeps swipes
+  reliable on cards restored by undo. Under-cards are plain views keyed by
+  `profileId` (top = depth 0), each with its own seat `progress` spring to its
+  depth, so an advance re-seats `2 → 1 → 2` smoothly and the card shown while
+  rising is the same profile — no content swap on level-keyed instances. **All
+  motion is Reanimated shared values driven by `Gesture.Pan` worklets and
+  `withSpring`** — there is no `setState` per frame and no gesture package
+  beyond gesture-handler. A `swipeInProgress` shared value is held for the whole
+  dismissal flight (both the pan path and the imperative `swipe()` path, plus a
+  per-dismissal `dispatchFired` latch) so an overlapping dismissal or a
+  re-fired spring completion can never double-advance the deck. `swipe()`
+  (imperative handle) drives the same dismissal from the toolbar buttons, which
+  are the §4.9 accessibility alternative to raw gestures.
+- Undo re-entry + promotion: `entry { x, y, scale }` on the front slot springs
+  the card from its exact exit vector (`exitVector` is mirrored for RTL in
+  `DiscoverScreen.onUndo`) or, on a normal advance, from the deepest spent seat
+  (`scale`/`translateY` derived from `DECK_VISIBLE_SLOTS *
+  UNDERCARD_[SCALE_STEP|TRANSLATE_STEP]`) so the promoted card rises out of the
+  stack instead of popping in.
 - `hooks/useDiscoverDeck.ts` owns deck state + wires every swipe/undo/reset to
   the outbox. `Image.prefetch` warms the next 4 cards. React Compiler is on
   (see `app.config.ts`), so the memoization in the screen is a guard, not a

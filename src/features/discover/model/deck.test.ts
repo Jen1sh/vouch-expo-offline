@@ -53,6 +53,25 @@ describe("deck state machine", () => {
     expect(undoDeck(createDeck(IDS))).toEqual(createDeck(IDS));
   });
 
+  it("undo then re-swipe returns the same person — no one is skipped (1→2→undo→1→2)", () => {
+    const deck = createDeck(["a", "b", "c", "d"]);
+
+    const reSwiped = advance(undoDeck(advance(deck, "like")), "like");
+    expect(reSwiped.remaining).toEqual(["b", "c", "d"]);
+    expect(reSwiped.lastSwipe).toEqual({ profileId: "a", direction: "like" });
+  });
+
+  it("undoing a later swipe and re-swiping keeps the same next person (no leap)", () => {
+    const deck = createDeck(["a", "b", "c", "d"]);
+    const two = advance(advance(deck, "like"), "skip");
+    const undone = undoDeck(two);
+    expect(undone.remaining).toEqual(["b", "c", "d"]);
+
+    const reSwiped = advance(undone, "like");
+    expect(reSwiped.remaining).toEqual(["c", "d"]);
+    expect(reSwiped.lastSwipe).toEqual({ profileId: "b", direction: "like" });
+  });
+
   it("reports empty once all cards are gone", () => {
     const all = IDS.reduce((state, _id, index) => {
       const directions = ["like", "skip", "askVoucher"] as const;

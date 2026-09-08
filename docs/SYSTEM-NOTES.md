@@ -236,7 +236,15 @@ Two persistence layers with different jobs:
   opens the profile (`Gesture.Exclusive(press, pan)`); the tap worklet reads the
   one-shot swipe lock from a **shared value** (never a ref, and the press
   callback is read on the JS thread via `runOnJS`) so no `.current` object is
-  ever captured-and-mutated by a worklet.
+  ever captured-and-mutated by a worklet. **Only the front card owns a
+  `GestureDetector`**, remounting with the card, so undo-restored cards always
+  get a freshly attached pan (no gesture object is shared between detectors).
+  Under-cards are plain views keyed by `profileId` with per-card seat `progress`
+  springs — an advance re-seats smoothly and the card shown while rising is the
+  same profile (no content swap / pop-in), so undo → re-swipe can't skip a
+  person. The one-shot swipe lock is held for the whole flight on **both** the
+  pan and the button paths (plus a per-dismissal `dispatchFired` latch) to stop
+  overlapping or double-fired dismissals from double-advancing the deck.
 - **Catalog (§4.4):** `src/mocks/seed/profiles.ts` deterministically seeds 60
   profiles with ≥3 photos each (asserted in `profiles.test.ts`). It is seed, not
   DB; `useDiscoverDeck` builds `profilesById` from it and prefetches the next 4

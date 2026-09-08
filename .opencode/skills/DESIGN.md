@@ -222,7 +222,7 @@ Visual hierarchy combines low-contrast structural borders with warm, ambient lig
 
 The design system adopts a balanced **Rounded (`2`)** curvature philosophy. 
 
-- **Containers & Deck Cards:** Utilize `rounded-xl` (`1.5rem` / `24px`) to feel welcoming and handheld.
+- **Containers & Deck Cards:** Containers use `rounded-xl` (`1.5rem` / `24px`); the swipable **deck/vouch cards** use a softer `rounded-2xl` (`2rem` / `32px`) so the large full-bleed card face never reads as sharp-edged.
 - **Interactive Controls & Fields:** Utilize `rounded-lg` (`0.75rem` / `12px`) for buttons, inputs, and preview modules.
 - **Badges, Pills, & Status Triggers:** Retain full pill styling (`9999px`) to immediately denote contextual status, role indication, and floating meta-controls.
 
