@@ -1,11 +1,5 @@
-import PlaceholderScreen from '@/components/placeholder-screen';
+import VoucherBrowseScreen from '@/src/features/voucher/browse/components/VoucherBrowseScreen';
 
-export default function VoucherBrowseScreen() {
-  return (
-    <PlaceholderScreen
-      icon="list.bullet"
-      title="Browse"
-      caption="Browse on behalf of the person you represent, then shortlist candidates."
-    />
-  );
+export default function VoucherBrowseRoute() {
+  return <VoucherBrowseScreen />;
 }

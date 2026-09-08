@@ -361,6 +361,64 @@ paging), `match-seed-saturday` (6 messages, 2 unread), `match-seed-book`
   has no voucher data for the member's catalog, so the section is omitted rather
   than faked.
 
+## Settings (§3.8) — preferences, RTL, theme
+
+- **Shared screen** `src/features/settings/components/SettingsScreen.tsx` is
+  rendered by *both* navigation trees
+  (`member/(tabs)/settings.tsx` + `voucher/(tabs)/settings.tsx`) — one account
+  has two trees and this is the single surface to switch between them (§3.7).
+- **Persistence** writes go through `src/features/settings/writes.ts` →
+  `upsertAppSetting` into the new `app_settings` table (migration 0005),
+  *then* the in-memory store (`src/features/settings/store/settings.ts`,
+  `useSyncExternalStore`) is patched — the UI never reads its own write back.
+  Wipe (`settings.wipe`) confirms with `Alert`, clears every mirror + the
+  outbox via `wipeLocalData()`, resets the settings/shortlist/swipe stores, and
+  toasts.
+- **Side effects** are applied by `useSettingsBridge` in `app/_layout.tsx`:
+  `themeMode` drives `UnistylesRuntime` (light/dark fixed, or back to
+  `setAdaptiveThemes(true)` for system), and `language` re-arms
+  `I18nManager.forceRTL` (iOS/Android only — never called on web). The root
+  `<Stack key={language}>` remounts the navigator on a language flip so every
+  layout reflows against the new reading direction.
+- **i18n** `src/i18n/{en,ar}.ts` are type-locked (`ar: Translations`) so a key
+  added in English must exist in Arabic or `tsc` fails. Interpolation uses
+  `{name}`/`{count}` placeholders. Adoption is incremental today: the tab bars,
+  Settings, voucher Browse, Shortlist and the candidate screen are translated;
+  older screens (Discover/Browse internals, Chat, Profile) remain English
+  until they adopt `t()`.
+
+## Voucher Browse + Shortlist (§3.9)
+
+- **Browse** `VoucherBrowseScreen` reuses the member feed (`useBrowseFeed`,
+  `BrowseFilterBar`, SQLite pagination) but the caret action is a *bookmark*
+  instead of a heart. Rows (`VoucherBrowseRow`) subscribe to only their own
+  shortlist state via `useUserShortlist(profileId)` — the same narrow-selector
+  isolation contract as `useUserSwipe`, proven by the dev-only `×N` badge.
+  Toggling flips the mirror optimistically, then reaches the durable outbox
+  (`enqueueShortlist` / `removeShortlist` in `src/outbox/vouching.ts`) and
+  toasts. A focus effect re-hydrates the mirror from `listAllShortlists()`.
+- **Candidate detail** `app/(protected)/(voucher)/candidate/[userId].tsx`
+  reuses the member profile's gallery/header/body but swaps the action bar for
+  a single primary Shortlist toggle (+ a hint when in the shortlist). The route
+  name is `candidate` (not `profile`) so it cannot collide with the member
+  tree's `/profile/[userId]`.
+- **Shortlist** `ShortlistScreen` reads `listShortlistItems()` — the
+  `shortlisted_profiles` mirror joined to the catalog (photo, name, chips) —
+  most recently shortlisted first, fully offline. Each row embeds
+  `VouchNoteEditor`: a debounced (800 ms) textarea whose write goes through
+  `enqueueUpdateVouchNote` (mirror + outbox in one transaction), capped at 200
+  chars, with a quiet "depth reached" confirmation past 140. Removal is
+  confirmed with `Alert`, then the row leaves optimistically and the outbox
+  path compensates.
+- **Outbox cascade** in `vouching.ts`:
+  - *add while nothing queued* — shortlist outbox item + mirror insert in one
+    transaction, then `attemptDrain()`.
+  - *remove while the add is still `queued`* — deletes the add item, rolls the
+    mirror row back, and (new) cancels any queued `updateVouchNote` for that
+    profile so the server never sees note text for an add it never received.
+  - *remove after the add left the queue* — enqueues a compensating
+    `unshortlist`; drain order guarantees the add lands first.
+
 ## Test suite (jest-expo)
 
 - `src/features/discover/model/deck.test.ts` — deck state machine, threshold
@@ -393,6 +451,14 @@ paging), `match-seed-saturday` (6 messages, 2 unread), `match-seed-book`
   (photo order, dot count/advance) and `ProfileScreen.test.tsx` (like
   toggle → outbox enqueue/undo, Ask-your-voucher, matched → Message CTA
   routing).
+- Voucher (§3.9): `store/user-shortlist.test.ts` (per-row notifications,
+  hydrate/clear), `VoucherBrowseRow.test.tsx` (the shortlist isolation proof —
+  toggling one row leaves the sibling at `×1`), `VouchNoteEditor.test.tsx`
+  (debounce collapse, 800 ms flush, 200-char cap, depth hint).
+- Settings (§3.8): `store/settings.test.ts` (hydrate/patch/reset + no-op
+  notification) and `SettingsScreen.test.tsx` (mode switch flips the badge,
+  theme/language chips + notifications write through the durable path,
+  sign-out).
 
 Run with `npm test`. (Integration tests for the drain's ordering while a chat
 thread is live and the `=FailedOutboxItems` stream are deferred — the drain is

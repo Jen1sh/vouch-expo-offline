@@ -1,11 +1,5 @@
-import PlaceholderScreen from '@/components/placeholder-screen';
+import ShortlistScreen from '@/src/features/voucher/shortlist/components/ShortlistScreen';
 
-export default function ShortlistScreen() {
-  return (
-    <PlaceholderScreen
-      icon="bookmark.fill"
-      title="Shortlist"
-      caption="Shortlisted candidates and the vouch note you're writing appear here."
-    />
-  );
+export default function VoucherShortlistRoute() {
+  return <ShortlistScreen />;
 }

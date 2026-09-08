@@ -318,3 +318,55 @@ Two persistence layers with different jobs:
   `/chat/[matchId]`.
 - **Non-goal:** no vouch-count block on the profile — the seed has no voucher
   rows for the member's catalog, so the section is omitted rather than faked.
+
+## Settings — preferences, RTL, theme (§3.8)
+
+- **One shared screen:** `src/features/settings/components/SettingsScreen.tsx`
+  renders in both trees (`member/(tabs)/settings.tsx` and
+  `voucher/(tabs)/settings.tsx`). It's the single place to flip the account
+  between member and voucher navigation (§3.7).
+- **Durable write path:** `settings/writes.ts` persists to `app_settings`
+  (new table, migration `0005_calm_king_bedlam.sql`) then patches the reactive
+  store — SQLite stays the source of truth, like the swipes mirror.
+- **Bridges:** `useSettingsBridge()` (root layout) hydrates the store once from
+  `getSettingsSnapshot()`, drives `UnistylesRuntime` from `themeMode`
+  (fixed light/dark or adaptive-system), and re-arms `I18nManager.allowRTL/
+  forceRTL` for the chosen language on iOS/Android only. The root
+  `<Stack key={language}>` remounts navigation on a language flip so layouts
+  reflow RTL. Theme/language/notification changes toast a confirmation.
+- **Wipe:** "Wipe local data" confirms with `Alert`, calls `wipeLocalData()`
+  (now clears outbox + swipes + matches + messages + `shortlisted_profiles` +
+  `app_settings`), resets the in-memory settings/shortlist/swipe mirrors, and
+  toasts. Chat reseeds on the next launch.
+- **i18n:** `src/i18n/{en,ar}.ts` lock their key sets via the `Translations`
+  type; `t()` interpolates `{name}`/`{count}`. Translated so far: tab bars,
+  Settings, voucher Browse, Shortlist, candidate screen — older screens stay
+  English until they adopt `t()`.
+
+## Voucher mode — Browse, Shortlist, candidate detail (§3.9)
+
+- **Tree:** `app/(protected)/(voucher)/` = Browse / Shortlist / Settings tabs
+  plus two pushed routes: `candidate/[userId]` (named `candidate`, never
+  `profile`, so it can't collide with the member tree's dynamic route) and the
+  placeholder three-way `thread/[vouchId]`.
+- **Browse:** reuses the member SQLite feed + filter sheet; the row action is a
+  bookmark. Each row subscribes to only its own shortlist state
+  (`useUserShortlist`), so a toggle re-renders exactly one row (dev `×N` badge
+  proves it). Toggles are optimistic through the mirror, durable via the outbox
+  (`enqueueShortlist`/`removeShortlist`), and toasted.
+- **Candidate detail:** `VoucherCandidateScreen` = member gallery/header/body +
+  a single Shortlist toggle bar (primary button, plus a "open Shortlist to
+  write your note" hint once added).
+- **Shortlist:** `ShortlistScreen` reads `listShortlistItems()` (mirror joined
+  to catalog) newest-first, offline-safe. Each row carries `VouchNoteEditor`:
+  800 ms debounce → `enqueueUpdateVouchNote` (outbox + mirror in one
+  transaction), 200-char cap, depth hint at 140. Removal confirms via `Alert`
+  and compensates through the outbox.
+- **DB:** migration 0005 adds `shortlisted_profiles` (PK profile id, note,
+  `outboxItemId`, timestamps, index on `createdAt`) and `app_settings` (key PK,
+  value, `updatedAt`). Mirror rows are added inside the same transaction as
+  their outbox item.
+- **Remove cascade:** if the add is still queued, the add item + mirror row are
+  deleted and any queued note-updates for that profile are cancelled
+  (`deleteQueuedNoteUpdates`); once sent, a compensating `unshortlist` is
+  enqueued so drain order leaves the server "not shortlisted".

@@ -15,8 +15,11 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { startOutboxWatcher } from "@/src/outbox";
 import { startChatRealtime } from "@/src/features/chat/realtime/chatRealtime";
 import DevPanelFab from "@/src/devpanel/DevPanelFab";
+import { AppToast } from "@/src/components/AppToast";
 import { AuthProvider } from "@/src/features/auth/context/AuthProvider";
 import { useAuth } from "@/src/features/auth/context/use-auth";
+import { useSettingsBridge } from "@/src/features/settings/hooks/useSettingsBridge";
+import { useSettings } from "@/src/features/settings/store/settings";
 import { AppModeProvider } from "@/src/store/mode/AppModeProvider";
 import "@/src/theme/unistyles";
 
@@ -28,6 +31,8 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { themeMode } = useSettings();
+  useSettingsBridge();
 
   useEffect(() => {
     startOutboxWatcher();
@@ -49,7 +54,10 @@ export default function RootLayout() {
     return null;
   }
 
-  const navigationTheme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
+  // `themeMode` ("system" | "light" | "dark") decides the navigation chrome;
+  // falls back to the OS scheme when following the system.
+  const effectiveScheme = themeMode === "system" ? colorScheme : themeMode;
+  const navigationTheme = effectiveScheme === "dark" ? DarkTheme : DefaultTheme;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -60,6 +68,7 @@ export default function RootLayout() {
           </AppModeProvider>
         </AuthProvider>
         <DevPanelFab />
+        <AppToast />
         <StatusBar style="auto" />
       </ThemeProvider>
     </GestureHandlerRootView>
@@ -68,6 +77,7 @@ export default function RootLayout() {
 
 function AppNavigator() {
   const { status, onboardingStatus } = useAuth();
+  const { language } = useSettings();
 
   useEffect(() => {
     if (status !== "unknown" && (status === "signedOut" || onboardingStatus !== "unknown")) {
@@ -79,8 +89,10 @@ function AppNavigator() {
     return null;
   }
 
+  // `key={language}` remounts the navigator when the language flips so the
+  // whole tree reflows against the new I18nManager direction (§3.8 RTL).
   return (
-    <Stack>
+    <Stack key={language}>
       <Stack.Protected guard={status === "signedIn"}>
         <Stack.Screen name="(protected)" options={{ headerShown: false }} />
       </Stack.Protected>

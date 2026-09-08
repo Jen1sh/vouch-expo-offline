@@ -1,5 +1,10 @@
 export { enqueueDecision, undoDecision, wipeLocalData } from "@/src/outbox/queue";
 export { sendMessage, retryFailedMessage, deleteMessage } from "@/src/outbox/messages";
+export {
+  enqueueShortlist,
+  removeShortlist,
+  enqueueUpdateVouchNote,
+} from "@/src/outbox/vouching";
 export { attemptDrain, startOutboxWatcher, isDraining } from "@/src/outbox/drain";
 export {
   newIdempotencyKey,

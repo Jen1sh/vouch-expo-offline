@@ -29,6 +29,24 @@ export function deleteOutboxItem(tx: DbTx, id: string): Promise<unknown> {
   return tx.delete(outboxItems).where(eq(outboxItems.id, id));
 }
 
+/**
+ * Cancels every still-`queued` `updateVouchNote` for a profile. Used when a
+ * shortlist add that never left the queue is rolled back — the note edits that
+ * only made sense while that add sat pending should vanish with it, or the
+ * server would receive note text for a candidate it was never told to shortlist.
+ */
+export async function deleteQueuedNoteUpdates(tx: DbTx, profileId: string): Promise<void> {
+  const candidates = await tx
+    .select({ id: outboxItems.id, payload: outboxItems.payload })
+    .from(outboxItems)
+    .where(and(eq(outboxItems.type, "updateVouchNote"), eq(outboxItems.status, "queued")));
+  for (const candidate of candidates) {
+    if (candidate.payload.profileId === profileId) {
+      await tx.delete(outboxItems).where(eq(outboxItems.id, candidate.id));
+    }
+  }
+}
+
 export async function getOutboxItem(client: DbClient, id: string): Promise<OutboxItemRow | undefined> {
   const [row] = await client.select().from(outboxItems).where(eq(outboxItems.id, id)).limit(1);
   return row;

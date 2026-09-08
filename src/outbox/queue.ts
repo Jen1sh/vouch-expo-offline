@@ -12,6 +12,8 @@ import {
 import { deleteAllSwipes, deleteSwipe, getSwipe, upsertSwipe } from "@/src/db/queries/swipes.queries";
 import { deleteAllMatches } from "@/src/db/queries/matches.queries";
 import { deleteAllMessages } from "@/src/db/queries/messages.queries";
+import { deleteAllShortlists } from "@/src/db/queries/shortlist.queries";
+import { deleteAllAppSettings } from "@/src/db/queries/settings.queries";
 import type { DecisionDirection } from "@/src/db/schema/swipes";
 import { newIdempotencyKey, type OutboxWrite } from "@/src/outbox/actions";
 import { attemptDrain } from "@/src/outbox/drain";
@@ -94,4 +96,6 @@ export async function wipeLocalData(): Promise<void> {
   await deleteAllSwipes();
   await deleteAllMessages();
   await deleteAllMatches();
+  await deleteAllShortlists();
+  await deleteAllAppSettings();
 }

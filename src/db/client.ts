@@ -7,6 +7,8 @@ import * as messagesSchema from "@/src/db/schema/messages";
 import * as profileSchema from "@/src/db/schema/profiles";
 import * as outboxSchema from "@/src/db/schema/outbox";
 import * as swipesSchema from "@/src/db/schema/swipes";
+import * as settingsSchema from "@/src/db/schema/settings";
+import * as shortlistSchema from "@/src/db/schema/shortlist";
 
 /**
  * Single drizzle instance over the app's SQLite file. Opened at module scope
@@ -16,7 +18,7 @@ import * as swipesSchema from "@/src/db/schema/swipes";
  */
 export const expoDb = openDatabaseSync("vouch.db", { enableChangeListener: true });
 
-export const schema = { ...catalogSchema, ...matchesSchema, ...messagesSchema, ...profileSchema, ...outboxSchema, ...swipesSchema };
+export const schema = { ...catalogSchema, ...matchesSchema, ...messagesSchema, ...profileSchema, ...outboxSchema, ...swipesSchema, ...settingsSchema, ...shortlistSchema };
 
 export const db = drizzle(expoDb, { schema });
 

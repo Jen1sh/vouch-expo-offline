@@ -21,7 +21,7 @@ export const outboxItems = sqliteTable(
   "outbox_items",
   {
     id: text("id").primaryKey(),
-    /** Discriminated action type: like | skip | askVoucher | undoDecision. */
+    /** Discriminated action type: like | skip | askVoucher | undoDecision | sendMessage | shortlist | unshortlist | updateVouchNote. */
     type: text("type").notNull(),
     /** Action payload without `type`/`idempotencyKey`; JSON because each action has its own shape. */
     payload: text("payload", { mode: "json" }).$type<Record<string, unknown>>().notNull(),

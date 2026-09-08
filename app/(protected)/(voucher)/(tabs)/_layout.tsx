@@ -3,6 +3,7 @@ import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useI18n } from '@/src/i18n';
 import { useTheme } from '@/src/theme';
 
 /**
@@ -12,6 +13,7 @@ import { useTheme } from '@/src/theme';
  */
 export default function VoucherTabLayout() {
   const { colors } = useTheme();
+  const { t } = useI18n();
 
   return (
     <Tabs
@@ -28,7 +30,7 @@ export default function VoucherTabLayout() {
       <Tabs.Screen
         name="browse"
         options={{
-          title: 'Browse',
+          title: t('nav.browse'),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="list.bullet" color={color} />
           ),
@@ -37,7 +39,7 @@ export default function VoucherTabLayout() {
       <Tabs.Screen
         name="shortlist"
         options={{
-          title: 'Shortlist',
+          title: t('nav.shortlist'),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="bookmark.fill" color={color} />
           ),
@@ -46,7 +48,7 @@ export default function VoucherTabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: t('nav.settings'),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="gearshape.fill" color={color} />
           ),

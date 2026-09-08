@@ -6,6 +6,7 @@ import m0001 from './0001_calm_sharon_carter.sql';
 import m0002 from './0002_shocking_scorpion.sql';
 import m0003 from './0003_add-catalog-mirror.sql';
 import m0004 from './0004_fast_scarecrow.sql';
+import m0005 from './0005_calm_king_bedlam.sql';
 
   export default {
     journal,
@@ -14,7 +15,8 @@ import m0004 from './0004_fast_scarecrow.sql';
 m0001,
 m0002,
 m0003,
-m0004
+m0004,
+m0005
     }
   }
   
