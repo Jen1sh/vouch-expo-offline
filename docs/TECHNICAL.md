@@ -174,26 +174,30 @@ out of **SQLite**, so the mirrored data really is the same catalogue.
 Filters live inside `BrowseFilterPanel` (the pure control body: age steppers,
 distance chips, verified switch, reset row). `BrowseFilterBar` renders a compact
 trigger pill (`slider.horizontal.3` icon + "Filters" + live summary text + active-
-count badge) that opens a slide-up RN `Modal` containing the panel. The sheet
-is `transparent` with `animationType="slide"` and respects the safe-area inset
-via `useSafeAreaInsets().bottom`.
+count badge) that presents an `@lodev09/react-native-true-sheet` sheet
+(`name="browse-filters"`, `detents={["auto"]}`, themed `backgroundColor` +
+`cornerRadius`, native grabber). TrueSheet replaced the earlier hand-rolled RN
+`Modal` (with its `transparent` + `animationType="slide"` sheet, scrim
+`Pressable`, and `useSafeAreaInsets().bottom` padding) for a native sheet:
+system grabber, native backdrop dismissal/gestures, automatic safe-area and
+keyboard handling.
 
 **Live apply**: every stepper/chip/switch interaction calls `onChange`, which
 immediately re-queries the FlashList behind the sheet. The list scrolls to top
-on any filter change (`scrollToOffset(0)`). Closing via the "Done" button or
-the scrim `Pressable` simply sets `open = false` — no confirm step.
+on any filter change (`scrollToOffset(0)`). Closing via the "Done" button
+(`dismiss()`) or a native dismiss gesture/backdrop sets `open = false` via
+`onDidDismiss` — no confirm step.
 
-**Scroll preservation**: the sheet `Modal` renders over the existing screen; the
+**Scroll preservation**: the sheet renders over the existing screen; the
 underlying `FlashList` and its scroll offset remain mounted and unchanged, so
 closing the sheet returns the user to exactly where they were.
 
-**`accessibilityViewIsModal`** is intentionally not set on the sheet View.
-The RN `Modal` host already provides native modal semantics on iOS/Android.
-Adding the prop on an inner View causes RNTL's accessibility matcher to hide
-the scrim sibling (modal sibling rule), breaking tests without improving
-device accessibility. This is a known RNTL behaviour — see
-`node_modules/@testing-library/react-native/build/helpers/accessibility.js`
-`isSubtreeInaccessible` → `getHostSiblings` → `computeAriaModal` path.
+**Tests** use the library's own Jest mock (wired once in `jest.setup.js` via
+`@lodev09/react-native-true-sheet/mock`, plus `transformIgnorePatterns` in
+`package.json`). The mock renders children as a plain `View` and records
+instance `present()`/`dismiss()` as jest.fn, so `BrowseFilterBar.test.tsx`
+asserts the trigger calls `present()`, "Done" calls `dismiss()`, and drives the
+controls directly (the mock keeps them in the tree).
 
 ## Browse — FlashList blank-space fixes (all platforms, §3.4)
 
@@ -463,9 +467,14 @@ paging), `match-seed-saturday` (6 messages, 2 unread), `match-seed-book`
 - `src/features/browse/components/BrowseRow.test.tsx` — the §3.4 isolation proof
   (two rows, one toggle, sibling render count stays `×1`), persisted-like mount
   state, row press → profile id.
-- `src/features/browse/components/BrowseFilterBar.test.tsx` — trigger opens
-  bottom sheet, age steppers, distance chip select/reset, verified switch
-  inside the modal, Done and scrim close.
+- `src/features/browse/components/BrowseFilterBar.test.tsx` — trigger presents
+  the true-sheet, age steppers, distance chip select/reset, verified switch,
+  Done dismisses (via the library's `/mock` in `jest.setup.js`).
+- `src/features/auth/components/VerifyCodeScreen.test.tsx` — two-step sign-in:
+  phone carried to the code screen, disabled-till-6-digits, wrong code inline
+  error (no sign-in), resend cooldown + notice, "Change number" back
+  navigation. `expo-router` and the verification store are mocked (verify/resend
+  driven from the test).
 - Chat: `src/features/chat/model/thread.test.ts` (merge/paging ordering + dedupe),
   `store/message-status.test.ts` + `store/typing.test.ts` + `store/matches.test.ts`
   (mirror isolation, 3500 ms auto-clear, store hydrate), `realtime/chatRealtime.test.ts`

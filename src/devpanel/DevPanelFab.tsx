@@ -21,7 +21,7 @@ export default function DevPanelFab() {
     return null;
   }
 
-  const bottom = Math.max(insets.bottom + 24, Platform.OS === 'ios' ? 24 : 32);
+  const top = Math.max(insets.top + 24, Platform.OS === 'ios' ? 24 : 32);
   const right = Math.max(insets.right + 16, 16);
 
   return (
@@ -29,7 +29,7 @@ export default function DevPanelFab() {
       accessibilityRole="button"
       accessibilityLabel="Open Dev Panel"
       onPress={() => router.push('/dev-panel')}
-      style={({ pressed }) => styles.fab(bottom, right, pressed)}>
+      style={({ pressed }) => styles.fab(top, right, pressed)}>
       <Text variant="labelMd" color="devPanelText" style={styles.label}>
         DEV
       </Text>
@@ -38,9 +38,9 @@ export default function DevPanelFab() {
 }
 
 const styles = StyleSheet.create((theme) => ({
-  fab: (bottom: number, right: number, pressed: boolean) => ({
+  fab: (top: number, right: number, pressed: boolean) => ({
     position: 'absolute',
-    bottom,
+    top,
     right,
     width: FAB_SIZE,
     height: FAB_SIZE,

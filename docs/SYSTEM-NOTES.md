@@ -6,8 +6,12 @@ future edits.
 
 ## How auth works
 
-- `app/(auth)/sign-in.tsx` (single screen, per product decision) hosts
-  `SignInScreen` from `src/features/auth/components/SignInScreen.tsx`.
+- `app/(auth)/sign-in.tsx` → `SignInScreen` (phone number only) and
+  `app/(auth)/verify.tsx` → `VerifyCodeScreen` (6-digit code), both from
+  `src/features/auth/components/`. Two-step flow per REQUIREMENTS §3.1: the phone
+  screen pushes `/verify?phone=…`; the verify screen shows the phone and a
+  "Change number" link that `router.back()`s — the sign-in screen stays mounted
+  under the `(auth)` Stack, so the typed number is never lost.
 - A mock SMS: the 6-digit code is generated locally via
   `generateVerificationCode()` (`expo-crypto` `randomUUID()` → numeric chars),
   persisted to SQLite, and shown in the **Dev Panel** (REQUIREMENTS §3.1 / §4.5)
@@ -325,10 +329,14 @@ Two persistence layers with different jobs:
   switches, so the `FlashList` retains its offset with no saved state.
 - **Why FlashList over FlatList** and the measured §4.6 evidence table live in
   `docs/TECHNICAL.md`.
-- **Bottom-sheet filters:** `BrowseFilterBar` is a trigger pill + RN `Modal`
-  bottom sheet containing `BrowseFilterPanel` (extracted controls). Filters
-  apply live on every interaction; closing is instant (Done or scrim). The sheet
-  `Modal` keeps the `FlashList` mounted, preserving scroll position.
+- **Bottom-sheet filters:** `BrowseFilterBar` is a trigger pill +
+  `@lodev09/react-native-true-sheet` (`name="browse-filters"`,
+  `detents={["auto"]}`, themed `backgroundColor`/`cornerRadius`, native grabber)
+  containing `BrowseFilterPanel` (extracted controls). Filters apply live on
+  every interaction; closing is the "Done" button or the native scrim/gesture
+  (via `dismiss()`/`onDidDismiss`). The sheet keeps the `FlashList` mounted,
+  preserving scroll position. This replaced the hand-rolled RN `Modal` sheet
+  (scrim + `useSafeAreaInsets` padding), which was dropped.
 - **FlashList blank-space fixes (all platforms):** row thumbnail uses
   `recyclingKey={profile.id}` + `cachePolicy="memory-disk"` to prevent
   recycled-cell ghost images; the footer is a stable `minHeight: 64` shell

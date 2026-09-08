@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Modal, Pressable } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRef, useState } from "react";
+import { Pressable } from "react-native";
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 
 import Text from "@/components/Text";
 import View from "@/components/View";
@@ -21,18 +21,26 @@ type BrowseFilterBarProps = {
 };
 
 /**
- * Compact trigger pill + bottom-sheet modal for the Browse filters. Opening the
+ * Compact trigger pill + `@lodev09/react-native-true-sheet` bottom sheet for
+ * the Browse filters. TrueSheet gives us a native sheet (grabber, scrim, safe
+ * area, keyboard handling) instead of the hand-rolled RN Modal. Opening the
  * sheet keeps the list mounted behind it, so scroll position survives even a
  * mid-scroll filter session; every control inside is `BrowseFilterPanel`,
  * which applies `onChange` live so the FlashList re-queries behind the sheet.
  */
 export default function BrowseFilterBar({ filters, onChange, onReset }: BrowseFilterBarProps) {
-  // useTheme(): raw glyph colors for the trigger icon (non-style props).
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
+  // useTheme(): raw tokens passed to the native sheet + icon glyph (non-style props).
+  const theme = useTheme();
+  const sheetRef = useRef<TrueSheet>(null);
   const [open, setOpen] = useState(false);
 
-  const close = () => setOpen(false);
+  const present = () => {
+    void sheetRef.current?.present();
+  };
+  const dismiss = () => {
+    void sheetRef.current?.dismiss();
+  };
+
   const count = activeFilterCount(filters);
   const summary = browseFilterSummary(filters);
 
@@ -42,9 +50,9 @@ export default function BrowseFilterBar({ filters, onChange, onReset }: BrowseFi
         accessibilityRole="button"
         accessibilityLabel="Show filters"
         accessibilityState={{ expanded: open }}
-        onPress={() => setOpen(true)}
+        onPress={present}
         style={({ pressed }) => styles.toggle(pressed)}>
-        <IconSymbol name="slider.horizontal.3" size={18} color={colors.textSecondary} />
+        <IconSymbol name="slider.horizontal.3" size={18} color={theme.colors.textSecondary} />
         <Text variant="labelLg" color="textPrimary">
           Filters
         </Text>
@@ -62,48 +70,42 @@ export default function BrowseFilterBar({ filters, onChange, onReset }: BrowseFi
         ) : null}
       </Pressable>
 
-      <Modal
-        visible={open}
-        transparent
-        animationType="slide"
-        statusBarTranslucent
-        onRequestClose={close}>
-        <View style={styles.overlay}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close filters"
-            style={styles.scrim}
-            onPress={close}
-          />
-          <View style={[styles.sheet, styles.sheetInsets(insets.bottom)]}>
-            <View style={styles.handle} />
-            <View style={styles.header}>
-              <Text variant="headlineSm" color="textPrimary">
-                Filters
-              </Text>
-              {count > 0 ? (
-                <View style={styles.count}>
-                  <Text variant="labelCaps" color="onSecondary">
-                    {count}
-                  </Text>
-                </View>
-              ) : null}
-              <View style={styles.headerSpacer} />
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Done"
-                hitSlop={8}
-                onPress={close}
-                style={({ pressed }) => styles.done(pressed)}>
-                <Text variant="labelMd" color="textSecondary">
-                  Done
+      <TrueSheet
+        ref={sheetRef}
+        name="browse-filters"
+        detents={["auto"]}
+        backgroundColor={theme.colors.surfaceElevated}
+        cornerRadius={theme.radius.xl}
+        grabber
+        onDidPresent={() => setOpen(true)}
+        onDidDismiss={() => setOpen(false)}>
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Text variant="headlineSm" color="textPrimary">
+              Filters
+            </Text>
+            {count > 0 ? (
+              <View style={styles.count}>
+                <Text variant="labelCaps" color="onSecondary">
+                  {count}
                 </Text>
-              </Pressable>
-            </View>
-            <BrowseFilterPanel filters={filters} onChange={onChange} onReset={onReset} />
+              </View>
+            ) : null}
+            <View style={styles.headerSpacer} />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Done"
+              hitSlop={8}
+              onPress={dismiss}
+              style={({ pressed }) => styles.done(pressed)}>
+              <Text variant="labelMd" color="textSecondary">
+                Done
+              </Text>
+            </Pressable>
           </View>
+          <BrowseFilterPanel filters={filters} onChange={onChange} onReset={onReset} />
         </View>
-      </Modal>
+      </TrueSheet>
     </View>
   );
 }
@@ -122,22 +124,22 @@ function browseFilterSummary(filters: BrowseFilters): string | null {
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((t) => ({
   bar: {
-    gap: theme.spacing.xs,
+    gap: t.spacing.xs,
   },
   toggle: (pressed: boolean) => ({
     flexDirection: "row",
     alignItems: "center",
-    gap: theme.spacing.xs,
+    gap: t.spacing.xs,
     alignSelf: "flex-start",
     maxWidth: "100%",
     borderWidth: 1,
-    borderColor: theme.colors.borderSubtle,
-    borderRadius: theme.radius.full,
-    backgroundColor: pressed ? theme.colors.hoverSurface : theme.colors.surface,
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing["2xs"],
+    borderColor: t.colors.borderSubtle,
+    borderRadius: t.radius.full,
+    backgroundColor: pressed ? t.colors.hoverSurface : t.colors.surface,
+    paddingHorizontal: t.spacing.sm,
+    paddingVertical: t.spacing["2xs"],
   }),
   summary: {
     flexShrink: 1,
@@ -145,55 +147,30 @@ const styles = StyleSheet.create((theme) => ({
   count: {
     minWidth: 18,
     height: 18,
-    borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.secondary,
+    borderRadius: t.radius.full,
+    backgroundColor: t.colors.secondary,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: theme.spacing["2xs"],
+    paddingHorizontal: t.spacing["2xs"],
   },
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  scrim: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: theme.colors.scrim,
-  },
-  sheet: {
-    gap: theme.spacing.md,
-    maxHeight: "86%",
-    backgroundColor: theme.colors.surfaceElevated,
-    borderTopLeftRadius: theme.radius.xl,
-    borderTopRightRadius: theme.radius.xl,
-    paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.sm,
-  },
-  sheetInsets: (insetBottom: number) => ({
-    paddingBottom: Math.max(insetBottom, theme.spacing.lg),
-  }),
-  handle: {
-    alignSelf: "center",
-    width: 36,
-    height: 4,
-    borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.borderStrong,
+  content: {
+    gap: t.spacing.md,
+    paddingHorizontal: t.spacing.lg,
+    paddingTop: t.spacing.sm,
+    paddingBottom: t.spacing.lg,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: theme.spacing.xs,
+    gap: t.spacing.xs,
   },
   headerSpacer: {
     flex: 1,
   },
   done: (pressed: boolean) => ({
-    borderRadius: theme.radius.full,
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing["2xs"],
-    backgroundColor: pressed ? theme.colors.hoverSurface : "transparent",
+    borderRadius: t.radius.full,
+    paddingHorizontal: t.spacing.sm,
+    paddingVertical: t.spacing["2xs"],
+    backgroundColor: pressed ? t.colors.hoverSurface : "transparent",
   }),
 }));
