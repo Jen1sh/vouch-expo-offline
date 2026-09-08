@@ -23,17 +23,19 @@ Every mutating user action passes through `src/outbox/` — nothing writes the
   (`expo-crypto`) generated at enqueue.
 - `outbox/queue.ts` — module-level single-flight scheduler. `isDraining()`
   guards re-entry (no two drains concurrently). Triggers: enqueue, AppState
-  `active`, and offline→online edges via `subscribeControls`.
+  `active`, and offline→online edges via `subscribeOffline` (Dev Panel toggle
+  or real device connectivity from `src/network/connectivity.ts`).
 - `outbox/drain.ts` — the worker. Claims one item, calls `request()` from
   `mocks/server.ts` (which throws `NetworkOfflineError` / `WriteFailureError`
-  per the Dev Panel knobs), retries with backoff, gives up at the attempt cap.
+  per the Dev Panel knobs or real connectivity), retries with backoff, gives up
+  at the attempt cap.
 - `outbox/backoff.ts` — pure schedule, unit-tested.
 
 **Backoff constants** (`backoff.ts`): `BASE_MS = 1000`, `CAP_MS = 30_000`,
 `JITTER = 0.2` (±20%), `MAX_ATTEMPTS = 5`. Delay for attempt `n` =
 `min(CAP, BASE · 2^(n−1))` then jitter. At attempt 5 (the cap) an item is
 permanently marked `failed` and surfaces in the Dev Panel dump. `NetworkOfflineError`
-pauses the drain with no retry bookkeeping (offline is not a failure).
+pauses the drain with no retry bookkeeping (offline — simulated or real — is not a failure).
 
 **Undo semantics** — exactly one level. `undoDecision(profileId)`:
 - If the decision is still `queued` (not yet claimed): delete the outbox item +

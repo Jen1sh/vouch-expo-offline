@@ -1,3 +1,5 @@
+import { isOffline } from "@/src/network/connectivity";
+
 import { getControlsSnapshot } from "../mocks/devPanelControls";
 
 /**
@@ -11,6 +13,9 @@ import { getControlsSnapshot } from "../mocks/devPanelControls";
  * out-of-order window: an emitted event may be delivered twice or held back
  * behind others. Consumers dedupe by `id` and reconcile against optimistic
  * local state (see `dedupe.ts`).
+ *
+ * While offline (Dev-Panel toggle or real connectivity) `emit` drops the event:
+ * a dead network delivers nothing.
  */
 
 export type RealtimeEvent =
@@ -79,8 +84,11 @@ function toEvent(input: RealtimeEventInput): RealtimeEvent {
   throw new Error(`Unreachable event type: ${String(input)}`);
 }
 
-/** Sends an event as if it arrived from the "network". */
+/** Sends an event as if it arrived from the "network". No-op while offline. */
 export function emit(input: RealtimeEventInput): void {
+  if (isOffline()) {
+    return;
+  }
   deliver(toEvent(input));
 }
 

@@ -19,7 +19,7 @@ import {
 } from "@/src/db/queries/outbox.queries";
 import type { OutboxItemRow } from "@/src/db/schema/outbox";
 import { setMessageStatusMirror } from "@/src/features/chat/store/message-status";
-import { getControlsSnapshot, subscribeControls } from "@/src/mocks/devPanelControls";
+import { isOffline, subscribeOffline } from "@/src/network/connectivity";
 import { maybeEmitMatchOnLike } from "@/src/mocks/reciprocity";
 import { maybeSchedulePartnerReply } from "@/src/mocks/partnerReply";
 import { NetworkOfflineError, request } from "@/src/mocks/server";
@@ -197,8 +197,9 @@ function scheduleWake(ms: number): void {
 }
 
 /**
- * Wires the weekly triggers once per process: app start, foreground, and the
- * Dev Panel offline toggle flipping back online. Safe to call repeatedly.
+ * Wires the drain triggers once per process: app start, foreground, and the
+ * combined offline channel flipping back online (Dev Panel toggle or real
+ * connectivity). Safe to call repeatedly.
  */
 export function startOutboxWatcher(): void {
   if (watcherStarted) {
@@ -214,8 +215,8 @@ export function startOutboxWatcher(): void {
     }
   });
 
-  subscribeControls(() => {
-    if (!getControlsSnapshot().offline) {
+  subscribeOffline(() => {
+    if (!isOffline()) {
       void attemptDrain();
     }
   });

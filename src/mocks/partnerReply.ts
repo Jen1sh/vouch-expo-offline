@@ -1,5 +1,8 @@
-import { getControlsSnapshot } from "./devPanelControls";
+import { isOffline } from "@/src/network/connectivity";
+
 import { emit } from "@/src/realtime/publishes";
+
+import { getControlsSnapshot } from "./devPanelControls";
 
 /**
  * Simulated partner reply engine (REQUIREMENTS §3.6/§4.3). When the Dev-Panel
@@ -8,6 +11,8 @@ import { emit } from "@/src/realtime/publishes";
  * so incoming messages travel the real, deliberately-unreliable event path
  * (dedupe, out-of-order window, duplicate rate) instead of a local fake timer
  * writing directly to the DB. The reply body is a deterministic canned line.
+ * Replies are only scheduled while online (real or simulated); `emit` also
+ * drops anything fired while the network is out.
  */
 
 const REPLY_LINES = [
@@ -50,6 +55,9 @@ export function maybeSchedulePartnerReply(matchId: string | undefined): void {
     return;
   }
   if (!getControlsSnapshot().autoReply) {
+    return;
+  }
+  if (isOffline()) {
     return;
   }
 

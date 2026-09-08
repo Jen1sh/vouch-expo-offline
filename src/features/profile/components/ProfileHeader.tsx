@@ -77,11 +77,11 @@ export function ProfileHeader({
 const styles = StyleSheet.create((theme) => ({
   wrap: {
     paddingHorizontal: theme.spacing.gutterMobile,
-    paddingTop: theme.spacing.lg,
+    paddingTop: theme.spacing.sm,
     paddingBottom: theme.spacing.md,
     gap: theme.spacing.xs,
     backgroundColor: theme.colors.surface,
-    marginTop: -theme.spacing.md,
+    marginTop: -theme.spacing.xs,
   },
   nameRow: {
     flexDirection: "row",

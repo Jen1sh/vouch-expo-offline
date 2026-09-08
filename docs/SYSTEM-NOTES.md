@@ -210,6 +210,16 @@ Two persistence layers with different jobs:
   `src/realtime/dedupe.ts` is the consumer-side seen-id reducer. The Dev Panel's
   "Force a match / duplicate" buttons drive both, and the event feed line shows
   received vs applied (the visible proof dedupe works).
+- **Real connectivity** (`src/network/connectivity.ts`): NetInfo (via
+  `@react-native-community/netinfo`) feeds the same offline channel as the Dev
+  Panel toggle — `useOffline()`/`isOffline()`/`subscribeOffline()` are true when
+  the manual toggle is ON **or** the device actually has no internet
+  (`isConnected === false || isInternetReachable === false`; an unknown
+  reachability reads as online to avoid a false-offline flash). `server.ts`
+  rejects with `NetworkOfflineError`, `drain.ts` wakes on offline→online, and
+  the realtime `emit`/auto-replies go silent when offline. Jest mocks NetInfo
+  via `jest.setup.js` (official `netinfo-mock.js`); the toggle remains a manual
+  override so offline can still be exercised while online.
 - **Scope note:** every knob is live. Seed data is the deterministic 60-profile
   catalog (asserted by a unit test); Discover reads it from the in-memory
   generator, while Browse mirrors it **into SQLite** idempotently
@@ -254,8 +264,9 @@ Two persistence layers with different jobs:
   (`src/outbox/drain.ts`, single-flight, FIFO `queued→sending` claim) replays
   through `mocks/server.ts` `request()` with exponential backoff (`backoff.ts`:
   1s base, 30s cap, ±20% jitter, 5 attempts → `failed`). The walker triggers on
-  enqueue, AppState foreground, and offline→online. Offline just pauses (Pill:
-  "Offline — swipes queued"). Dev Panel's **Dump outbox contents** now lists
+  enqueue, AppState foreground, and offline→online (Dev Panel toggle or real
+  connectivity). Offline just pauses (Pill: "Offline — swipes queued"). Dev
+  Panel's **Dump outbox contents** now lists
   items + statuses (Refresh), and **Wipe local data** clears outbox + swipes via
   a confirm Alert. Design details + conflict rule + measured §4.6 numbers live
   in `docs/TECHNICAL.md`.

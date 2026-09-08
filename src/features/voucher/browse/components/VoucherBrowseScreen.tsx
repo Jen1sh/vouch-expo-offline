@@ -24,7 +24,7 @@ import {
 import VoucherBrowseRow from "@/src/features/voucher/browse/components/VoucherBrowseRow";
 import { logVoucherShortlistToggle } from "@/src/features/voucher/browse/performance";
 import { useI18n } from "@/src/i18n";
-import { useDevPanelControls } from "@/src/mocks/devPanelControls";
+import { useOffline } from "@/src/network/connectivity";
 import { enqueueShortlist, removeShortlist } from "@/src/outbox";
 import { StyleSheet } from "@/src/theme";
 
@@ -41,7 +41,7 @@ export default function VoucherBrowseScreen() {
   const { items, hasMore, status, tailError, retry, retryTail, onEndReached } =
     useBrowseFeed(filters);
   const listRef = useRef<FlashListRef<CatalogBrowseItem>>(null);
-  const controls = useDevPanelControls();
+  const offline = useOffline();
   const { t } = useI18n();
 
   const applyFilters = useCallback((next: BrowseFilters) => {
@@ -135,7 +135,7 @@ export default function VoucherBrowseScreen() {
   if (status === "error" && items.length === 0) {
     return (
       <View style={styles.screen}>
-        <Header offline={controls.offline} />
+        <Header offline={offline} />
         <BrowseFilterBar filters={filters} onChange={applyFilters} onReset={resetFilters} />
         <View style={styles.stateCenter}>
           <Text variant="headlineSm" color="textPrimary">
@@ -157,7 +157,7 @@ export default function VoucherBrowseScreen() {
 
   return (
     <View style={styles.screen}>
-      <Header offline={controls.offline} />
+      <Header offline={offline} />
       <BrowseFilterBar filters={filters} onChange={applyFilters} onReset={resetFilters} />
 
       <FlashList

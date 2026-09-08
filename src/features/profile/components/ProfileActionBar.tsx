@@ -45,11 +45,12 @@ export function ProfileActionBar({
       {matchId ? (
         <Button
           variant="primary"
+          size="sm"
           onPress={() =>
             router.push({ pathname: "/chat/[matchId]", params: { matchId } })
           }
           accessibilityLabel={`Message ${firstName}`}>
-          <IconSymbol name="message.fill" size={18} color={colors.onPrimary} />
+          <IconSymbol name="message.fill" size={16} color={colors.onPrimary} />
           <Text style={styles.messageLabel}>Message</Text>
         </Button>
       ) : null}
@@ -67,7 +68,7 @@ export function ProfileActionBar({
         }>
         <IconSymbol
           name="xmark"
-          size={26}
+          size={22}
           color={decision === "skip" ? colors.onCritical : colors.critical}
         />
       </Pressable>
@@ -83,7 +84,7 @@ export function ProfileActionBar({
         }>
         <IconSymbol
           name="arrow.up"
-          size={26}
+          size={22}
           color={decision === "askVoucher" ? colors.onSecondary : colors.secondary}
         />
       </Pressable>
@@ -100,7 +101,7 @@ export function ProfileActionBar({
         }>
         <IconSymbol
           name={decision === "like" ? "heart.fill" : "heart"}
-          size={26}
+          size={22}
           color={decision === "like" ? colors.onPrimary : colors.secondary}
         />
       </Pressable>
@@ -110,17 +111,17 @@ export function ProfileActionBar({
 
 type ActionTone = "like" | "skip" | "askVoucher";
 
-const BUTTON_SIZE = 60;
+const BUTTON_SIZE = 48;
 
 const styles = StyleSheet.create((theme) => ({
   bar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: theme.spacing.md,
+    gap: theme.spacing.sm,
     paddingHorizontal: theme.spacing.gutterMobile,
-    paddingTop: theme.spacing.md,
-    paddingBottom: theme.spacing.md,
+    paddingTop: theme.spacing.sm,
+    paddingBottom: theme.spacing.sm,
     borderTopWidth: 1,
     borderColor: theme.colors.borderSubtle,
     backgroundColor: theme.colors.surface,

@@ -16,7 +16,7 @@ import {
 import { logBrowseLikeToggle } from "@/src/features/browse/performance";
 import { getDecision, toggleLike } from "@/src/features/browse/store/user-swipes";
 import { enqueueDecision, undoDecision } from "@/src/outbox";
-import { useDevPanelControls } from "@/src/mocks/devPanelControls";
+import { useOffline } from "@/src/network/connectivity";
 import { StyleSheet } from "@/src/theme";
 import type { CatalogBrowseItem } from "@/src/db/queries/catalog.queries";
 
@@ -39,7 +39,7 @@ export default function BrowseScreen() {
     onEndReached,
   } = useBrowseFeed(filters);
   const listRef = useRef<FlashListRef<CatalogBrowseItem>>(null);
-  const controls = useDevPanelControls();
+  const offline = useOffline();
 
   const applyFilters = useCallback((next: BrowseFilters) => {
     setFilters(next);
@@ -105,7 +105,7 @@ export default function BrowseScreen() {
   if (status === "error" && items.length === 0) {
     return (
       <View style={styles.screen}>
-        <Header offline={controls.offline} />
+        <Header offline={offline} />
         <BrowseFilterBar filters={filters} onChange={applyFilters} onReset={resetFilters} />
         <View style={styles.stateCenter}>
           <Text variant="headlineSm" color="textPrimary">
@@ -127,7 +127,7 @@ export default function BrowseScreen() {
 
   return (
     <View style={styles.screen}>
-      <Header offline={controls.offline} />
+      <Header offline={offline} />
       <BrowseFilterBar filters={filters} onChange={applyFilters} onReset={resetFilters} />
 
       <FlashList

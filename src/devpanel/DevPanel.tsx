@@ -13,6 +13,7 @@ import {
   useDevPanelControls,
   type DevPanelControls,
 } from '@/src/mocks/devPanelControls';
+import { useRealOnline } from '@/src/network/connectivity';
 import { isDraining, wipeLocalData } from '@/src/outbox';
 import { listMatches } from '@/src/db/queries/matches.queries';
 import { createEventDedupe } from '@/src/realtime/dedupe';
@@ -45,6 +46,7 @@ const OUT_OF_ORDER_MAX = 6;
 
 export default function DevPanel() {
   const controls = useDevPanelControls();
+  const realOnline = useRealOnline();
   const { code, cooldownRemaining, isCooldown, resend } = useVerificationCode();
   const router = useRouter();
   const [feed, setFeed] = useState<FeedState>({ received: 0, applied: 0, last: getLastEmittedEvent() });
@@ -161,10 +163,12 @@ export default function DevPanel() {
         <Section title="Simulated network">
           <ToggleRow
             label="Offline"
-            caption="Rejects every request with a network error."
+            caption="Rejects every request — also auto-enables when the device has no connectivity."
             value={controls.offline}
             onValueChange={(offline) => update({ offline })}
           />
+
+          <StatusRow label="Real connection" value={realOnline} />
 
           <ChoiceRow label="Latency" caption="Extra delay per request." helper={`Currently ${controls.latencyMinMs}–${controls.latencyMaxMs}ms`}>
             {LATENCY_CHOICES.map((value) => (
@@ -210,10 +214,10 @@ export default function DevPanel() {
 
         <Section title="Simulated realtime">
           <View style={styles.actionsRow}>
-            <Button variant="secondary" size="sm" onPress={forceMatchEvent}>
+            <Button variant="secondary" size="sm" style={styles.actionButton} onPress={forceMatchEvent}>
               Force a match event
             </Button>
-            <Button variant="secondary" size="sm" onPress={forceDuplicateEvent}>
+            <Button variant="secondary" size="sm" style={styles.actionButton} onPress={forceDuplicateEvent}>
               Force a duplicate
             </Button>
           </View>
@@ -228,10 +232,10 @@ export default function DevPanel() {
             onValueChange={(autoReply) => update({ autoReply })}
           />
           <View style={styles.actionsRow}>
-            <Button variant="secondary" size="sm" onPress={() => void sendTestIncoming()}>
+            <Button variant="secondary" size="sm" style={styles.actionButton} onPress={() => void sendTestIncoming()}>
               Force incoming message
             </Button>
-            <Button variant="secondary" size="sm" onPress={() => void sendTestTyping()}>
+            <Button variant="secondary" size="sm" style={styles.actionButton} onPress={() => void sendTestTyping()}>
               Simulate typing
             </Button>
           </View>
@@ -260,15 +264,12 @@ export default function DevPanel() {
           </View>
           {outbox && outbox.length > 0 ? (
             <View style={styles.feed}>
-              {outbox.slice(0, 10).map((item) => (
+              {outbox.map((item) => (
                 <Text key={item.id} variant="bodySm" color="textMuted">
                   {item.type} · {item.status}
                   {item.attempts > 0 ? ` · ${item.attempts} attempt${item.attempts === 1 ? '' : 's'}` : ''}
                 </Text>
               ))}
-              {outbox.length > 10 ? (
-                <Text variant="bodySm" color="textMuted">… {outbox.length - 10} more</Text>
-              ) : null}
             </View>
           ) : null}
         </Section>
@@ -337,6 +338,26 @@ function ToggleRow({
         trackColor={{ true: theme.colors.secondary, false: theme.colors.borderSubtle }}
         thumbColor={theme.colors.surfaceElevated}
       />
+    </View>
+  );
+}
+
+function StatusRow({ label, value }: { label: string; value: boolean }) {
+  return (
+    <View style={styles.statusRow}>
+      <View style={styles.actionCopy}>
+        <Text variant="labelLg" color="textPrimary">
+          {label}
+        </Text>
+        <Text variant="bodySm" color="textMuted">
+          {value ? 'Device has internet.' : 'No internet — treated as offline.'}
+        </Text>
+      </View>
+      <View style={styles.connPill(value)}>
+        <Text variant="labelMd" color={value ? 'tertiary' : 'offlineText'}>
+          {value ? 'Online' : 'Offline'}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -530,6 +551,9 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: 'row',
     gap: theme.spacing.sm,
   },
+  actionButton: {
+    flex: 1,
+  },
   actionRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -546,6 +570,20 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: 'space-between',
     gap: theme.spacing.md,
   },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: theme.spacing.md,
+  },
+  connPill: (connected: boolean) => ({
+    backgroundColor: connected ? theme.colors.tertiaryContainer : theme.colors.offlineBackground,
+    borderWidth: 1,
+    borderColor: connected ? theme.colors.tertiary : theme.colors.offlineBorder,
+    borderRadius: theme.radius.full,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing['2xs'],
+  }),
   choiceRow: {
     gap: theme.spacing.sm,
   },

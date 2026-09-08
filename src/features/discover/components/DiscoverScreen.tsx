@@ -16,14 +16,14 @@ import {
   type SwipeDirection,
 } from "@/src/features/discover/model/deck";
 import { DeckFpsOverlay, logSwipeCost, recordDiscoverRender } from "@/src/features/discover/performance";
-import { useDevPanelControls } from "@/src/mocks/devPanelControls";
+import { useOffline } from "@/src/network/connectivity";
 import { SEED_PROFILES } from "@/src/mocks/seed/profiles";
 import { StyleSheet, useTheme } from "@/src/theme";
 import type { Profile } from "@/src/types/profile";
 
 export default function DiscoverScreen() {
   const { deck, profilesById, handleSwiped, handleUndo, handleReset } = useDiscoverDeck();
-  const controls = useDevPanelControls();
+  const offline = useOffline();
   const deckRef = useRef<CardDeckHandle>(null);
 
   const [deckSize, setDeckSize] = useState({ width: 0, height: 0 });
@@ -114,7 +114,7 @@ export default function DiscoverScreen() {
         <Text variant="headlineSm" color="textPrimary">
           Discover
         </Text>
-        {controls.offline ? (
+        {offline ? (
           <View style={styles.offlinePill}>
             <Text variant="labelMd" color="offlineText">
               Offline — swipes queued

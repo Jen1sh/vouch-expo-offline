@@ -59,7 +59,3 @@ export function resetDevPanelControls(): void {
 export function useDevPanelControls(): DevPanelControls {
   return useSyncExternalStore(subscribeControls, getControlsSnapshot, getControlsSnapshot);
 }
-
-export function isOffline(): boolean {
-  return controls.offline;
-}
